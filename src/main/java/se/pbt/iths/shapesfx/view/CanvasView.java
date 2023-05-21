@@ -4,6 +4,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import se.pbt.iths.shapesfx.model.MyCircle;
 
 
 public class CanvasView extends BorderPane {
@@ -22,9 +23,9 @@ public class CanvasView extends BorderPane {
         gc.fillRect(x, y, width, height);
     }
 
-    public void drawCircle(double x, double y, double width, double height, Color color) {
-        gc.setFill(color);
-        gc.fillOval(x, y, width, height);
+    public void drawCircle(MyCircle circle, double x, double y) {
+        gc.setFill(circle.getPaint());
+        gc.fillOval(x - circle.getRadius(), y - circle.getRadius(), circle.getRadius() * 2, circle.getRadius() * 2);
     }
 
     public void drawTriangle(double x, double y, double width, double height, Color color) {
