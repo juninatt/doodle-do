@@ -7,14 +7,17 @@ public class MyCircle extends Circle {
     private Color color;
     private boolean selected;
 
+    public MyCircle(double radius, Color color) {
+        super(radius);
+        this.color = color;
+    }
+
     public MyCircle(double centerX, double centerY, double radius, Color color) {
         super(centerX, centerY, radius);
         this.color = color;
         this.selected = false;
         setFill(color);
     }
-
-    // Additional methods specific to MyCircle class
 
     public void setColor(Color color) {
         this.color = color;
@@ -27,7 +30,6 @@ public class MyCircle extends Circle {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
-        // Update appearance or perform any other necessary actions
     }
 }
 
