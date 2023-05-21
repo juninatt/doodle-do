@@ -1,27 +1,23 @@
 package se.pbt.iths.shapesfx.model;
 
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 public class MyCircle extends Circle {
-    private Color color;
+    private Paint paint;
     private boolean selected;
 
-    public MyCircle(double radius, Color color) {
+    public MyCircle(double radius, Paint paint) {
         super(radius);
-        this.color = color;
+        this.paint = paint;
     }
 
-    public MyCircle(double centerX, double centerY, double radius, Color color) {
-        super(centerX, centerY, radius);
-        this.color = color;
-        this.selected = false;
-        setFill(color);
+    public Paint getPaint() {
+        return paint;
     }
-
-    public void setColor(Color color) {
-        this.color = color;
-        setFill(color);
+    public void setColor(Paint paint) {
+        this.paint = paint;
+        setFill(paint);
     }
 
     public boolean isSelected() {
