@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import se.pbt.iths.shapesfx.view.CanvasView?>
+<?import java.net.URL?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="se.pbt.iths.shapesfx.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.iths.shapesfx.controller.ShapesController">
+    <stylesheets>
+        <URL value="@style.css" />
+    </stylesheets>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+    <top>
+        <VBox spacing="10.0">
+            <MenuBar>
+                <Menu text="Menu">
+                    <MenuItem text="Item 1"/>
+                    <MenuItem text="Item 2"/>
+                    <MenuItem text="Item 3"/>
+                </Menu>
+            </MenuBar>
+        </VBox>
+    </top>
+
+    <center>
+        <VBox alignment="CENTER" spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </padding>
+
+            <CanvasView fx:id="canvasView" VBox.vgrow="ALWAYS" onMouseClicked="#handleCanvasClick" styleClass="canvas-with-border" />
+
+            <Label fx:id="welcomeText" />
+
+        </VBox>
+    </center>
+</BorderPane>
+
