@@ -12,6 +12,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.ShapesApplication;
+import se.pbt.iths.shapesfx.model.MyCircle;
+import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 import se.pbt.iths.shapesfx.view.CanvasView;
 
 import java.io.IOException;
@@ -25,11 +27,11 @@ public class ShapesController {
     private Label welcomeText;
 
     public void initialize() {
-        rootPane = new BorderPane();
-        canvasView = new CanvasView();
-
-        rootPane.setCenter(canvasView);
-        VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
+        if (canvasView == null) {
+            canvasView = new CanvasView();
+            rootPane.setCenter(canvasView);
+            VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
+        }
         welcomeText.setText("Welcome!");
     }
 
@@ -38,6 +40,10 @@ public class ShapesController {
         double x = event.getX();
         double y = event.getY();
         System.out.println("Mouse clicked at coordinates: (" + x + ", " + y + ")");
+        for (MyCircle circle : SavedShapes.getInstance().getSavedCircles())
+            if (circle.isSelected()) {
+                canvasView.drawCircle(circle, event.getX(), event.getY());
+            }
     }
 
     @FXML
@@ -73,8 +79,5 @@ public class ShapesController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-    public CanvasView getCanvasView() {
-        return canvasView;
     }
 }
