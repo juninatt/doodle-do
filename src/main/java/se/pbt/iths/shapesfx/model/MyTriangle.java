@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.shape;
+package se.pbt.iths.shapesfx.model;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
