@@ -15,10 +15,10 @@
     <top>
         <VBox spacing="10.0">
             <MenuBar>
-                <Menu text="Menu">
-                    <MenuItem text="Item 1"/>
-                    <MenuItem text="Item 2"/>
-                    <MenuItem text="Item 3"/>
+                <Menu text="Draw">
+                    <MenuItem text="Circle" onAction="#handleDrawCircle"/>
+                    <MenuItem text="Triangle" onAction="#handleDrawTriangle"/>
+                    <MenuItem text="Square" onAction="#handleDrawSquare"/>
                 </Menu>
             </MenuBar>
         </VBox>

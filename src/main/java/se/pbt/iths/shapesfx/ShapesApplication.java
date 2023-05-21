@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class ShapesApplication extends Application {
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource("hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource("shapes-view.fxml"));
         Parent root = fxmlLoader.load();
 
         ShapesController controller = fxmlLoader.getController();
