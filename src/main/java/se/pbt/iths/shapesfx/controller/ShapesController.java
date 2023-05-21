@@ -1,13 +1,20 @@
 package se.pbt.iths.shapesfx.controller;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import se.pbt.iths.shapesfx.ShapesApplication;
 import se.pbt.iths.shapesfx.view.CanvasView;
+
+import java.io.IOException;
 
 public class ShapesController {
     @FXML
@@ -35,26 +42,37 @@ public class ShapesController {
 
     @FXML
     private void handleDrawCircle() {
-        openShapeDialog("Circle");
+        openShapeCreationWindow("create-circle.fxml", "Create Circle");
     }
 
     @FXML
     private void handleDrawTriangle() {
-        openShapeDialog("Triangle");
+        openShapeCreationWindow("create-triangle.fxml", "Create Triangle");
     }
 
     @FXML
     private void handleDrawSquare() {
-        openShapeDialog("Square");
+        openShapeCreationWindow("create-square.fxml", "Create Square");
     }
 
-    private void openShapeDialog(String shapeName) {
-        // Open a small new window or perform any other action
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Draw Shape");
-        alert.setHeaderText(null);
-        alert.setContentText("You selected " + shapeName);
-        alert.showAndWait();
+
+    private void openShapeCreationWindow(String fxmlFile, String title) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource(fxmlFile));
+            Parent root = fxmlLoader.load();
+            ShapeCreationController controller = fxmlLoader.getController();
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle(title);
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            controller.setStage(stage); // Pass the stage reference to the controller
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public CanvasView getCanvasView() {
         return canvasView;
