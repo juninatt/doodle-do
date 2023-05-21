@@ -68,7 +68,7 @@ public class ShapesController {
             stage.setScene(new Scene(root));
             stage.show();
 
-            controller.setStage(stage); // Pass the stage reference to the controller
+            controller.setStage(stage);
 
         } catch (IOException e) {
             e.printStackTrace();
