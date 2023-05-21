@@ -3,15 +3,16 @@ package se.pbt.iths.shapesfx.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.model.MyCircle;
+import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 
 public class ShapeCreationController {
 
     private Stage stage;
     private double radius;
-    private Color color;
+    private Paint paint;
 
     @FXML
     private Slider sizeSlider;
@@ -21,28 +22,20 @@ public class ShapeCreationController {
 
     @FXML
     private void initialize() {
-        // Set the initial values for size and color
         radius = sizeSlider.getValue();
-        color = colorPicker.getValue();
+        paint = colorPicker.getValue();
 
-        // Listen for changes in size and color
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> radius = newValue.doubleValue());
-
-        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> color = newValue);
+        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> paint = newValue);
     }
 
     @FXML
     private void handleConfirmCircleButton() {
-        // Create a circle object with the selected size and color
-        MyCircle circle = new MyCircle(radius, color);
+        MyCircle circle = new MyCircle(radius, paint);
+        circle.setSelected(true);
+        SavedShapes.getInstance().getSavedCircles().add(circle);
 
-
-        // Close the window
         stage.close();
-
-        // Perform any additional actions with the created circle object
-        // For example, you could pass it to another method or update the canvas with the circle
-        // ...
     }
 
     public void setStage(Stage stage) {
