@@ -36,6 +36,21 @@ public class ShapesController {
     }
 
     @FXML
+    private void handleDrawCircle() {
+        openShapeCreationWindow("create-shape-view.fxml", "Create Circle");
+    }
+
+    @FXML
+    private void handleDrawTriangle() {
+        openShapeCreationWindow("create-shape-view.fxml", "Create Triangle");
+    }
+
+    @FXML
+    private void handleDrawSquare() {
+        openShapeCreationWindow("create-shape-view.fxml", "Create Square");
+    }
+
+    @FXML
     private void handleCanvasClick(MouseEvent event) {
         double x = event.getX();
         double y = event.getY();
@@ -45,22 +60,6 @@ public class ShapesController {
                 canvasView.drawCircle(circle, event.getX(), event.getY());
             }
     }
-
-    @FXML
-    private void handleDrawCircle() {
-        openShapeCreationWindow("create-circle.fxml", "Create Circle");
-    }
-
-    @FXML
-    private void handleDrawTriangle() {
-        openShapeCreationWindow("create-triangle.fxml", "Create Triangle");
-    }
-
-    @FXML
-    private void handleDrawSquare() {
-        openShapeCreationWindow("create-square.fxml", "Create Square");
-    }
-
 
     private void openShapeCreationWindow(String fxmlFile, String title) {
         try {
