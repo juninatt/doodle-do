@@ -65,7 +65,7 @@ public class ShapesController {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource(fxmlFile));
             Parent root = fxmlLoader.load();
-            ShapeCreationController controller = fxmlLoader.getController();
+            CreateShapeController controller = fxmlLoader.getController();
 
             Stage stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);
