@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.ShapesApplication;
 import se.pbt.iths.shapesfx.model.MyCircle;
+import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 import se.pbt.iths.shapesfx.view.CanvasView;
 
@@ -55,10 +56,20 @@ public class ShapesController {
         double x = event.getX();
         double y = event.getY();
         System.out.println("Mouse clicked at coordinates: (" + x + ", " + y + ")");
-        for (MyCircle circle : SavedShapes.getInstance().getSavedCircles())
+
+        for (MyCircle circle : SavedShapes.getInstance().getSavedCircles()) {
             if (circle.isSelected()) {
                 canvasView.drawCircle(circle, event.getX(), event.getY());
+                circle.setSelected(false);
             }
+        }
+
+        for (MySquare square : SavedShapes.getInstance().getSavedSquares()) {
+            if (square.isSelected()) {
+                canvasView.drawSquare(square, x, y);
+                square.setSelected(false);
+            }
+         }
     }
 
     private void openShapeCreationWindow(String fxmlFile, String title) {
