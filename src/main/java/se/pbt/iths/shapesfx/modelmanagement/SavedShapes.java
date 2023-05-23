@@ -2,6 +2,7 @@ package se.pbt.iths.shapesfx.modelmanagement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.shape.Shape;
 import se.pbt.iths.shapesfx.model.MyCircle;
 import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.model.MyTriangle;
@@ -9,6 +10,8 @@ import se.pbt.iths.shapesfx.model.MyTriangle;
 public class SavedShapes {
 
     public static SavedShapes instance;
+
+    ObservableList<Shape> storedShapes;
 
     private final ObservableList<MyCircle> savedCircles;
 
@@ -87,5 +90,25 @@ public class SavedShapes {
 
     public ObservableList<MyTriangle> getSavedTriangles() {
         return savedTriangles;
+    }
+
+    public void addShape(Shape shape) {
+        if (shape != null) {
+            storedShapes.add(shape);
+        } else {
+            throw new IllegalArgumentException("Circle cannot be null");
+        }
+    }
+
+    public void removeShape(Shape shape) {
+        if (shape != null) {
+            storedShapes.remove(shape);
+        } else {
+            throw new IllegalArgumentException("Shape cannot be null");
+        }
+    }
+
+    public ObservableList<Shape> getSavedShapes() {
+        return storedShapes;
     }
 }
