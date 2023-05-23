@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import se.pbt.iths.shapesfx.view.CanvasView?>
+<?import se.pbt.iths.shapesfx.view.canvas.CanvasView?>
 <?import java.net.URL?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.iths.shapesfx.controller.ShapesController">

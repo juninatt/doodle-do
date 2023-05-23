@@ -14,7 +14,6 @@ import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
 
 public class CreateShapeController {
 
-    private Stage stage;
     private double size;
     private Paint paint;
 
@@ -36,6 +35,7 @@ public class CreateShapeController {
     @FXML
     private void handleConfirmShapeButton() {
         Shape shape;
+        Stage stage = (Stage) sizeSlider.getScene().getWindow();
         var shapeType = stage.getTitle().toLowerCase();
         if (shapeType.contains("circle")) {
             shape = new MyCircle(size, paint);
@@ -50,9 +50,5 @@ public class CreateShapeController {
         SelectedShape.getInstance().setSelectedShape(shape);
         SavedShapes.getInstance().addShape(shape);
         stage.close();
-    }
-
-    public void setStage(Stage stage) {
-        this.stage = stage;
     }
 }

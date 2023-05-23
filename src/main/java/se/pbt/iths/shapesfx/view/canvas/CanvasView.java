@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.view;
+package se.pbt.iths.shapesfx.view.canvas;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;

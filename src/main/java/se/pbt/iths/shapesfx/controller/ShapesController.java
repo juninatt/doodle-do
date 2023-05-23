@@ -1,23 +1,17 @@
 package se.pbt.iths.shapesfx.controller;
 
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.ShapesApplication;
 import se.pbt.iths.shapesfx.model.MyCircle;
 import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.model.MyTriangle;
 import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
-import se.pbt.iths.shapesfx.view.CanvasView;
-
-import java.io.IOException;
+import se.pbt.iths.shapesfx.view.canvas.CanvasView;
+import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
 
 public class ShapesController {
 
@@ -73,21 +67,7 @@ public class ShapesController {
 
 
         private void openShapeCreationWindow (String title){
-            try {
-                FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource("create-shape-view.fxml"));
-                Parent root = fxmlLoader.load();
-                CreateShapeController controller = fxmlLoader.getController();
-
-                Stage stage = new Stage();
-                stage.initModality(Modality.APPLICATION_MODAL);
-                stage.setTitle(title);
-                stage.setScene(new Scene(root));
-                stage.show();
-
-                controller.setStage(stage);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+                FXMLWindowLoader windowLoader = new FXMLWindowLoader(title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
+                windowLoader.loadWindow();
     }
 }
