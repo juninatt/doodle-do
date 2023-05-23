@@ -7,7 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -15,87 +14,67 @@ import se.pbt.iths.shapesfx.ShapesApplication;
 import se.pbt.iths.shapesfx.model.MyCircle;
 import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.model.MyTriangle;
-import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
+import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.view.CanvasView;
 
 import java.io.IOException;
 
 public class ShapesController {
-    @FXML
-    private BorderPane rootPane;
+
+    private static final String CREATE_CIRCLE_TITLE = "Create Circle";
+    private static final String CREATE_TRIANGLE_TITLE = "Create Triangle";
+    private static final String CREATE_SQUARE_TITLE = "Create Square";
     @FXML
     public CanvasView canvasView;
     @FXML
     private Label welcomeText;
 
     public void initialize() {
-        if (canvasView == null) {
-            canvasView = new CanvasView();
-            rootPane.setCenter(canvasView);
-            VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
-        }
+        VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
         welcomeText.setText("Welcome!");
     }
 
     @FXML
     private void handleDrawCircle() {
-        openShapeCreationWindow("create-shape-view.fxml", "Create Circle");
+        openShapeCreationWindow(CREATE_CIRCLE_TITLE);
     }
 
     @FXML
     private void handleDrawTriangle() {
-        openShapeCreationWindow("create-shape-view.fxml", "Create Triangle");
+        openShapeCreationWindow(CREATE_TRIANGLE_TITLE);
     }
 
     @FXML
     private void handleDrawSquare() {
-        openShapeCreationWindow("create-shape-view.fxml", "Create Square");
+        openShapeCreationWindow(CREATE_SQUARE_TITLE);
     }
 
     @FXML
     private void handleCanvasClick(MouseEvent event) {
         double x = event.getX();
         double y = event.getY();
-        System.out.println("Mouse clicked at coordinates: (" + x + ", " + y + ")");
+        var shape = SelectedShape.getInstance().getSelectedShape();
+        if (shape instanceof MyCircle circle)
+            canvasView.drawCircle(circle, event.getX(), event.getY());
+        else if (shape instanceof MySquare square)
+            canvasView.drawSquare(square, x, y);
+        else if (shape instanceof MyTriangle triangle) {
+            var size = triangle.getSize();
+            var halfSize = size / 2;
 
-        for (MyCircle circle : SavedShapes.getInstance().getSavedCircles()) {
-            if (circle.isSelected()) {
-                canvasView.drawCircle(circle, event.getX(), event.getY());
-                circle.setSelected(false);
-                break;
-            }
-        }
+            var xCoordinates = new double[]{x, x - halfSize, x + halfSize};
+            var yCoordinates = new double[]{y - halfSize, y + halfSize, y + halfSize};
 
-        for (MySquare square : SavedShapes.getInstance().getSavedSquares()) {
-            if (square.isSelected()) {
-                canvasView.drawSquare(square, x, y);
-                square.setSelected(false);
-                break;
-            }
-        }
+            triangle.getPoints().setAll(xCoordinates[0], yCoordinates[0], xCoordinates[1], yCoordinates[1], xCoordinates[2], yCoordinates[2]);
 
-        for (MyTriangle triangle : SavedShapes.getInstance().getSavedTriangles()) {
-            if (triangle.isSelected()) {
-                double size = triangle.getSize();
-                double halfSize = size / 2;
-
-                double[] xCoordinates = new double[]{x, x - halfSize, x + halfSize};
-                double[] yCoordinates = new double[]{y - halfSize, y + halfSize, y + halfSize};
-
-                triangle.getPoints().setAll(xCoordinates[0], yCoordinates[0], xCoordinates[1], yCoordinates[1], xCoordinates[2], yCoordinates[2]);
-
-                canvasView.drawTriangle(triangle, xCoordinates, yCoordinates);
-
-                triangle.setSelected(false);
-                break;
-            }
+            canvasView.drawTriangle(triangle, xCoordinates, yCoordinates);
         }
     }
 
 
-        private void openShapeCreationWindow (String fxmlFile, String title){
+        private void openShapeCreationWindow (String title){
             try {
-                FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource(fxmlFile));
+                FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource("create-shape-view.fxml"));
                 Parent root = fxmlLoader.load();
                 CreateShapeController controller = fxmlLoader.getController();
 

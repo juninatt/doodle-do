@@ -4,11 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.model.MyCircle;
 import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.model.MyTriangle;
 import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
+import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
 
 public class CreateShapeController {
 
@@ -32,21 +34,21 @@ public class CreateShapeController {
     }
 
     @FXML
-    private void handleConfirmCircleButton() {
-        var shape = stage.getTitle().toLowerCase();
-        if (shape.contains("circle")) {
-            MyCircle circle = new MyCircle(size, paint);
-            circle.setSelected(true);
-            SavedShapes.getInstance().addCircle(circle);
-        } else if (shape.contains("square")) {
-            MySquare square = new MySquare(size, paint);
-            square.setSelected(true);
-            SavedShapes.getInstance().addSquare(square);
-        } else if (shape.contains("triangle")) {
-            MyTriangle triangle = new MyTriangle(size, paint);
-            triangle.setSelected(true);
-            SavedShapes.getInstance().addTriangle(triangle);
+    private void handleConfirmShapeButton() {
+        Shape shape;
+        var shapeType = stage.getTitle().toLowerCase();
+        if (shapeType.contains("circle")) {
+            shape = new MyCircle(size, paint);
+            SavedShapes.getInstance().addShape(shape);
+        } else if (shapeType.contains("square")) {
+            shape = new MySquare(size, paint);
+        } else if (shapeType.contains("triangle")) {
+            shape = new MyTriangle(size, paint);
+        } else {
+            throw new IllegalArgumentException("Error while creating shape. No shape was created");
         }
+        SelectedShape.getInstance().setSelectedShape(shape);
+        SavedShapes.getInstance().addShape(shape);
         stage.close();
     }
 
