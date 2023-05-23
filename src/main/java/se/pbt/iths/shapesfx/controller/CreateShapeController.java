@@ -23,6 +23,10 @@ public class CreateShapeController {
     private ColorPicker colorPicker;
 
 
+    /**
+     * Initializes the controller and sets up event listeners for sizeSlider and colorPicker,
+     * then retrieves the initial values of size and paint.
+     */
     @FXML
     private void initialize() {
         size = sizeSlider.getValue();
@@ -32,23 +36,40 @@ public class CreateShapeController {
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> paint = newValue);
     }
 
+    /**
+     * Handles the confirm shape button click event.
+     * Creates the selected shape based on the dialog title, sets it as the selected shape in {@link SelectedShape}
+     * and adds it to the {@link SavedShapes} list.
+     */
     @FXML
-    private void handleConfirmShapeButton() {
+    private void confirmShapeButtonClicked() {
         Shape shape;
         Stage stage = (Stage) sizeSlider.getScene().getWindow();
-        var shapeType = stage.getTitle().toLowerCase();
-        if (shapeType.contains("circle")) {
-            shape = new MyCircle(size, paint);
-            SavedShapes.getInstance().addShape(shape);
-        } else if (shapeType.contains("square")) {
-            shape = new MySquare(size, paint);
-        } else if (shapeType.contains("triangle")) {
-            shape = new MyTriangle(size, paint);
-        } else {
-            throw new IllegalArgumentException("Error while creating shape. No shape was created");
+        var action = stage.getTitle();
+        switch (action) {
+            case "Create Circle" -> shape = new MyCircle(size, paint);
+            case "Create Square" -> shape = new MySquare(size, paint);
+            case "Create Triangle" -> shape = new MyTriangle(size, paint);
+            default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
         }
         SelectedShape.getInstance().setSelectedShape(shape);
         SavedShapes.getInstance().addShape(shape);
         stage.close();
+    }
+
+    public double getSize() {
+        return size;
+    }
+
+    public Paint getPaint() {
+        return paint;
+    }
+
+    public Slider getSizeSlider() {
+        return sizeSlider;
+    }
+
+    public ColorPicker getColorPicker() {
+        return colorPicker;
     }
 }
