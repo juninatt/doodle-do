@@ -32,7 +32,7 @@
 
             <CanvasView fx:id="canvasView" VBox.vgrow="ALWAYS" onMouseClicked="#handleCanvasClick" styleClass="canvas-with-border" />
 
-            <Label fx:id="welcomeText" />
+            <Label fx:id="informationLabel" />
 
         </VBox>
     </center>

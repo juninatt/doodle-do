@@ -24,4 +24,8 @@ public class SelectedShape {
     public Shape getSelectedShape() {
         return selectedShape;
     }
+
+    public void reset() {
+        selectedShape = null;
+    }
 }
