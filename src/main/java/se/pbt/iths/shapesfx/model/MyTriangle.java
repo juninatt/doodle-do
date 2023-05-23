@@ -5,13 +5,15 @@ import javafx.scene.shape.Polygon;
 
 public class MyTriangle extends Polygon {
     private Paint paint;
-    double sideLength;
+    double size;
     private boolean selected;
 
-    public MyTriangle(double sideLength, Paint paint) {
+    public MyTriangle(double size, Paint paint) {
         super();
-        this.sideLength = sideLength;
+        this.size = size;
         this.paint = paint;
+        this.selected = false;
+        setFill(paint);
     }
 
 
@@ -32,7 +34,7 @@ public class MyTriangle extends Polygon {
         this.selected = selected;
     }
 
-    public double getSideLength() {
-        return sideLength;
+    public double getSize() {
+        return size;
     }
 }
