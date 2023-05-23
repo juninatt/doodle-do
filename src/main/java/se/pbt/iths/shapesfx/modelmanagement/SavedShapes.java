@@ -80,4 +80,12 @@ public class SavedShapes {
     public ObservableList<MyCircle> getSavedCircles() {
         return savedCircles;
     }
+
+    public ObservableList<MySquare> getSavedSquares() {
+        return savedSquares;
+    }
+
+    public ObservableList<MyTriangle> getSavedTriangles() {
+        return savedTriangles;
+    }
 }
