@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.model.MyCircle;
 import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.model.MyTriangle;
@@ -67,7 +68,7 @@ public class ShapesController {
 
 
         private void openShapeCreationWindow (String title){
-                FXMLWindowLoader windowLoader = new FXMLWindowLoader(title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
+                FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
                 windowLoader.loadWindow();
     }
 }
