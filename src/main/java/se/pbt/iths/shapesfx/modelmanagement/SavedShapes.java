@@ -23,6 +23,7 @@ public class SavedShapes {
         this.savedCircles = FXCollections.observableArrayList();
         this.savedTriangles = FXCollections.observableArrayList();
         this.savedSquares = FXCollections.observableArrayList();
+        storedShapes = FXCollections.observableArrayList();
     }
 
     public static SavedShapes getInstance() {
