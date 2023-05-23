@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.ShapesApplication;
 import se.pbt.iths.shapesfx.model.MyCircle;
 import se.pbt.iths.shapesfx.model.MySquare;
+import se.pbt.iths.shapesfx.model.MyTriangle;
 import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 import se.pbt.iths.shapesfx.view.CanvasView;
 
@@ -69,25 +70,42 @@ public class ShapesController {
                 canvasView.drawSquare(square, x, y);
                 square.setSelected(false);
             }
-         }
+        }
+
+        for (MyTriangle triangle : SavedShapes.getInstance().getSavedTriangles()) {
+            if (triangle.isSelected()) {
+                double size = triangle.getSize();
+                double halfSize = size / 2;
+
+                double[] xCoordinates = new double[]{x, x - halfSize, x + halfSize};
+                double[] yCoordinates = new double[]{y - halfSize, y + halfSize, y + halfSize};
+
+                triangle.getPoints().setAll(xCoordinates[0], yCoordinates[0], xCoordinates[1], yCoordinates[1], xCoordinates[2], yCoordinates[2]);
+
+                canvasView.drawTriangle(triangle, xCoordinates, yCoordinates);
+
+                triangle.setSelected(false);
+            }
+        }
     }
 
-    private void openShapeCreationWindow(String fxmlFile, String title) {
-        try {
-            FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource(fxmlFile));
-            Parent root = fxmlLoader.load();
-            CreateShapeController controller = fxmlLoader.getController();
 
-            Stage stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.setTitle(title);
-            stage.setScene(new Scene(root));
-            stage.show();
+        private void openShapeCreationWindow (String fxmlFile, String title){
+            try {
+                FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource(fxmlFile));
+                Parent root = fxmlLoader.load();
+                CreateShapeController controller = fxmlLoader.getController();
 
-            controller.setStage(stage);
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setTitle(title);
+                stage.setScene(new Scene(root));
+                stage.show();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                controller.setStage(stage);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 }
