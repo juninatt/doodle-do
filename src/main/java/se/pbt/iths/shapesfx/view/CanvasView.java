@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import se.pbt.iths.shapesfx.model.MyCircle;
+import se.pbt.iths.shapesfx.model.MySquare;
 
 
 public class CanvasView extends BorderPane {
@@ -18,9 +19,12 @@ public class CanvasView extends BorderPane {
         setCenter(canvas);
     }
 
-    public void drawRectangle(double x, double y, double width, double height, Color color) {
-        gc.setFill(color);
-        gc.fillRect(x, y, width, height);
+    public void drawSquare(MySquare square, double x, double y) {
+        var sideLength = square.getWidth();
+        var centerX = x - sideLength / 2;
+        var centerY = y - sideLength / 2;
+        gc.setFill(square.getPaint());
+        gc.fillRect(centerX, centerY, square.getWidth(), square.getHeight());
     }
 
     public void drawCircle(MyCircle circle, double x, double y) {
