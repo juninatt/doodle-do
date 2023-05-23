@@ -6,6 +6,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.model.MyCircle;
+import se.pbt.iths.shapesfx.model.MySquare;
 import se.pbt.iths.shapesfx.model.MyTriangle;
 import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 
@@ -36,11 +37,15 @@ public class CreateShapeController {
         if (shape.contains("circle")) {
             MyCircle circle = new MyCircle(size, paint);
             circle.setSelected(true);
-            SavedShapes.getInstance().getSavedCircles().add(circle);
+            SavedShapes.getInstance().addCircle(circle);
         } else if (shape.contains("square")) {
-
+            MySquare square = new MySquare(size, paint);
+            square.setSelected(true);
+            SavedShapes.getInstance().addSquare(square);
         } else if (shape.contains("triangle")) {
             MyTriangle triangle = new MyTriangle(size, paint);
+            triangle.setSelected(true);
+            SavedShapes.getInstance().addTriangle(triangle);
         }
         stage.close();
     }
