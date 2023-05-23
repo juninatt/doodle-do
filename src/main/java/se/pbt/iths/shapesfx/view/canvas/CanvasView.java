@@ -14,7 +14,7 @@ public class CanvasView extends BorderPane {
     private final GraphicsContext gc;
 
     public CanvasView() {
-        canvas = new Canvas(500, 300);
+        canvas = new Canvas();
         gc = canvas.getGraphicsContext2D();
         setCenter(canvas);
     }

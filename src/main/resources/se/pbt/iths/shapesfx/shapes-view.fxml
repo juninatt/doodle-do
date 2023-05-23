@@ -7,7 +7,7 @@
 <?import se.pbt.iths.shapesfx.view.canvas.CanvasView?>
 <?import java.net.URL?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.iths.shapesfx.controller.ShapesController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.iths.shapesfx.controller.ShapesController" prefWidth="800" prefHeight="600">
     <stylesheets>
         <URL value="@style.css" />
     </stylesheets>
@@ -27,7 +27,7 @@
     <center>
         <VBox alignment="CENTER" spacing="20.0">
             <padding>
-                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                <Insets bottom="25.0" left="20.0" right="20.0" top="20.0"/>
             </padding>
 
             <CanvasView fx:id="canvasView" VBox.vgrow="ALWAYS" onMouseClicked="#handleCanvasClick" styleClass="canvas-with-border" />
