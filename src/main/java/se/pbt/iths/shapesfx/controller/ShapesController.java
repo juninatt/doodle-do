@@ -62,6 +62,7 @@ public class ShapesController {
             if (circle.isSelected()) {
                 canvasView.drawCircle(circle, event.getX(), event.getY());
                 circle.setSelected(false);
+                break;
             }
         }
 
@@ -69,6 +70,7 @@ public class ShapesController {
             if (square.isSelected()) {
                 canvasView.drawSquare(square, x, y);
                 square.setSelected(false);
+                break;
             }
         }
 
@@ -85,6 +87,7 @@ public class ShapesController {
                 canvasView.drawTriangle(triangle, xCoordinates, yCoordinates);
 
                 triangle.setSelected(false);
+                break;
             }
         }
     }
