@@ -12,6 +12,10 @@ import se.pbt.iths.shapesfx.model.MyTriangle;
 import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
 
+/**
+ * Controller class for the shape creation dialog window.
+ * Handles user interactions and shape creation based on user input.
+ */
 public class CreateShapeController {
 
     private double size;

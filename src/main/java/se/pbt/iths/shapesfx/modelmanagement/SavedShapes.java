@@ -25,7 +25,7 @@ public class SavedShapes {
         if (shape != null) {
             storedShapes.add(shape);
         } else {
-            throw new IllegalArgumentException("Circle cannot be null");
+            throw new IllegalArgumentException("Shape cannot be null");
         }
     }
 
