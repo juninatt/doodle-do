@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.model;
+package se.pbt.iths.shapesfx.model.shapes;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;

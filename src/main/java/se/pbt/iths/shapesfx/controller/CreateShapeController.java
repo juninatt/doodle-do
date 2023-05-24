@@ -6,9 +6,9 @@ import javafx.scene.control.Slider;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.model.MyCircle;
-import se.pbt.iths.shapesfx.model.MySquare;
-import se.pbt.iths.shapesfx.model.MyTriangle;
+import se.pbt.iths.shapesfx.model.shapes.MyCircle;
+import se.pbt.iths.shapesfx.model.shapes.MySquare;
+import se.pbt.iths.shapesfx.model.shapes.MyTriangle;
 import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
 import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
 
