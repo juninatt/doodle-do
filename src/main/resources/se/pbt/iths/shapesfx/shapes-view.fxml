@@ -20,6 +20,9 @@
                     <MenuItem text="Triangle" onAction="#handleDrawTriangle"/>
                     <MenuItem text="Square" onAction="#handleDrawSquare"/>
                 </Menu>
+                <Menu text="Gallery" fx:id="savedShapesMenu">
+
+                </Menu>
             </MenuBar>
         </VBox>
     </top>

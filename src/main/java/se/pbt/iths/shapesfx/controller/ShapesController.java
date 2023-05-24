@@ -32,7 +32,6 @@ public class ShapesController {
 
     @FXML
     public CanvasView canvasView;
-
     @FXML
     public Menu savedShapesMenu;
     @FXML
