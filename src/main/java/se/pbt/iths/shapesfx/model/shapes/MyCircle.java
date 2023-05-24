@@ -4,18 +4,30 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 
 public class MyCircle extends Circle {
+
+    private String name;
     private Paint paint;
     private boolean selected;
 
-    public MyCircle(double radius, Paint paint) {
+    public MyCircle(String name, double radius, Paint paint) {
         super(radius);
+        this.name = name;
         this.paint = paint;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Paint getPaint() {
         return paint;
     }
-    public void setColor(Paint paint) {
+
+    public void setPaint(Paint paint) {
         this.paint = paint;
         setFill(paint);
     }
