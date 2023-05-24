@@ -44,11 +44,11 @@ public class CanvasViewModel {
 
         try {
             graphicsContext.setFill(circle.getPaint());
-            graphicsContext.fillOval(x - circle.getRadius(), y - circle.getRadius(), circle.getRadius() * 2, circle.getRadius() * 2);
+            graphicsContext.fillOval(x - circle.getRadius() / 2, y - circle.getRadius() / 2, circle.getRadius(), circle.getRadius());
         } catch (IllegalArgumentException illegalArgumentException) {
             throw new IllegalArgumentException("Problem when applying the circle values to the graphics context in " + this.getClass() + ". " + illegalArgumentException.getMessage());
         }
-        }
+    }
 
     public void drawTriangle(MyTriangle triangle, double[] xPoints, double[] yPoints) throws DrawingException{
 

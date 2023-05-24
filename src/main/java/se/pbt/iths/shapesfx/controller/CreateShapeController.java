@@ -3,6 +3,7 @@ package se.pbt.iths.shapesfx.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
@@ -21,6 +22,8 @@ public class CreateShapeController {
     private double size;
     private Paint paint;
 
+    @FXML
+    public TextField shapeNameField;
     @FXML
     private Slider sizeSlider;
     @FXML
@@ -51,9 +54,9 @@ public class CreateShapeController {
         Stage stage = (Stage) sizeSlider.getScene().getWindow();
         var action = stage.getTitle();
         switch (action) {
-            case "Create Circle" -> shape = new MyCircle(size, paint);
-            case "Create Square" -> shape = new MySquare(size, paint);
-            case "Create Triangle" -> shape = new MyTriangle(size, paint);
+            case "Create Circle" -> shape = new MyCircle(shapeNameField.getText(), size, paint);
+            case "Create Square" -> shape = new MySquare(shapeNameField.getText(), size, paint);
+            case "Create Triangle" -> shape = new MyTriangle(shapeNameField.getText(),  size, paint);
             default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
         }
         SelectedShape.getInstance().setSelectedShape(shape);

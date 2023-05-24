@@ -7,3 +7,20 @@
     -fx-border-width: 1px;
     -fx-background-color:white;
 }
+
+#confirmButton {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 20px;
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-border-radius: 5px;
+}
+
+#confirmButton:hover {
+    -fx-background-color: #45a049;
+}
+
+#confirmButton:pressed {
+    -fx-background-color: #45a049;
+    -fx-text-fill: #e6e6e6;
+}
