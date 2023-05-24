@@ -6,6 +6,7 @@ import javafx.scene.layout.BorderPane;
 import se.pbt.iths.shapesfx.model.shapes.MyCircle;
 import se.pbt.iths.shapesfx.model.shapes.MySquare;
 import se.pbt.iths.shapesfx.model.shapes.MyTriangle;
+import se.pbt.iths.shapesfx.model.viewmodel.CanvasViewModel;
 
 
 public class CanvasView extends BorderPane {
@@ -13,28 +14,25 @@ public class CanvasView extends BorderPane {
     private final Canvas canvasNode;
     private final GraphicsContext graphicsContext;
 
+    private final CanvasViewModel viewModel;
+
     public CanvasView() {
         canvasNode = new Canvas(600, 400);
         graphicsContext = canvasNode.getGraphicsContext2D();
+        viewModel = new CanvasViewModel(graphicsContext);
         setCenter(canvasNode);
     }
 
     public void drawSquare(MySquare square, double x, double y) {
-        var sideLength = square.getWidth();
-        var centerX = x - sideLength / 2;
-        var centerY = y - sideLength / 2;
-        graphicsContext.setFill(square.getPaint());
-        graphicsContext.fillRect(centerX, centerY, square.getWidth(), square.getHeight());
+        viewModel.drawSquare(square, x, y);
     }
 
     public void drawCircle(MyCircle circle, double x, double y) {
-        graphicsContext.setFill(circle.getPaint());
-        graphicsContext.fillOval(x - circle.getRadius(), y - circle.getRadius(), circle.getRadius() * 2, circle.getRadius() * 2);
+        viewModel.drawCircle(circle, x, y);
     }
 
     public void drawTriangle(MyTriangle triangle, double[] xPoints, double[] yPoints) {
-        graphicsContext.setFill(triangle.getPaint());
-        graphicsContext.fillPolygon(xPoints, yPoints, 3);
+        viewModel.drawTriangle(triangle, xPoints, yPoints);
     }
 
 

@@ -91,7 +91,7 @@ public class ShapesController {
             populateSavedShapesMenu();
         } catch (RuntimeException runtimeException) {
             informationText.setText("Use the menu to create and draw a shape");
-            System.out.println("Could not draw shape on canvas. " + runtimeException.getMessage());
+            System.out.println(runtimeException.getMessage());
         }
     }
     private void populateSavedShapesMenu() {
