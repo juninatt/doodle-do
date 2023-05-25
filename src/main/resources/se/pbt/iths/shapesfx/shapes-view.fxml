@@ -20,8 +20,13 @@
                     <MenuItem text="Triangle" onAction="#handleDrawTriangle"/>
                     <MenuItem text="Square" onAction="#handleDrawSquare"/>
                 </Menu>
-                <Menu text="Gallery" fx:id="savedShapesMenu">
-
+                <Menu text="Gallery">
+                    <!-- To be filled with created shapes -->
+                </Menu>
+                <Menu text="Options">
+                    <MenuItem text="Edit" onAction="#handleOptionsEdit"/>
+                    <MenuItem text="Save" onAction="#handleOptionSave"/>
+                    <MenuItem text="Load" onAction="#handleOptionLoad"/>
                 </Menu>
             </MenuBar>
         </VBox>

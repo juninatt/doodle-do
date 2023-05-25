@@ -16,9 +16,10 @@
 
     <Label styleClass="title-label" GridPane.columnSpan="2" />
 
-    <VBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="CENTER">
-        <TextField promptText="Shape Name" fx:id="shapeNameField" />
-    </VBox>
+    <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="CENTER">
+        <Label text="Name:"/>
+        <TextField promptText="Enter name of shape" fx:id="shapeNameField" />
+    </HBox>
 
     <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="CENTER">
         <Label text="Size:" />
