@@ -21,28 +21,16 @@ public class CanvasView extends BorderPane {
         setCenter(canvasNode);
     }
 
-    public void drawSquare(MySquare square, double x, double y) {
-        try {
+    public void drawSquare(MySquare square, double x, double y) throws DrawingException{
             canvasViewModel.drawSquare(square, x, y);
-        } catch (DrawingException drawingException) {
-            throw new RuntimeException("Failed to draw square in " + this.getClass() + ". " + drawingException.getMessage());
-        }
     }
 
-    public void drawCircle(MyCircle circle, double x, double y) {
-        try {
+    public void drawCircle(MyCircle circle, double x, double y) throws DrawingException {
             canvasViewModel.drawCircle(circle, x, y);
-        } catch (DrawingException drawingException) {
-            throw new RuntimeException("Failed to draw circle in " + this.getClass() + ". " + drawingException.getMessage());
-        }
     }
 
-    public void drawTriangle(MyTriangle triangle, double[] xPoints, double[] yPoints) {
-        try {
+    public void drawTriangle(MyTriangle triangle, double[] xPoints, double[] yPoints) throws DrawingException {
             canvasViewModel.drawTriangle(triangle, xPoints, yPoints);
-        } catch (DrawingException drawingException) {
-            throw new RuntimeException("Failed to draw triangle in " + this.getClass() + ". " + drawingException.getMessage());
-        }
     }
 
     public Canvas getCanvasNode() {

@@ -7,11 +7,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
+import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
 import se.pbt.iths.shapesfx.model.shapes.MyCircle;
 import se.pbt.iths.shapesfx.model.shapes.MySquare;
 import se.pbt.iths.shapesfx.model.shapes.MyTriangle;
-import se.pbt.iths.shapesfx.modelmanagement.SavedShapes;
+import se.pbt.iths.shapesfx.modelmanagement.DrawnShapesMenu;
 import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
+import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 
 /**
  * Controller class for the shape creation dialog window.
@@ -41,28 +43,44 @@ public class CreateShapeController {
 
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> size = newValue.doubleValue());
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> paint = newValue);
+        InformationTextProvider.getInformationTextProperty().set("Set the size and color of your shape and press 'Confirm'.");
     }
 
     /**
      * Handles the confirm shape button click event.
      * Creates the selected shape based on the dialog title, sets it as the selected shape in {@link SelectedShape}
-     * and adds it to the {@link SavedShapes} list.
+     * and adds it to the {@link DrawnShapesMenu} list.
      */
     @FXML
     private void confirmShapeButtonClicked() {
-        Shape shape;
-        Stage stage = (Stage) sizeSlider.getScene().getWindow();
-        var action = stage.getTitle();
-        switch (action) {
-            case "Create Circle" -> shape = new MyCircle(shapeNameField.getText(), size, paint);
-            case "Create Square" -> shape = new MySquare(shapeNameField.getText(), size, paint);
-            case "Create Triangle" -> shape = new MyTriangle(shapeNameField.getText(),  size, paint);
-            default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
+        if (!allFieldsHaveValues()) {
+            InformationTextProvider.getInformationTextProperty().set("All of the shape's properties must have a value");
+        } else {
+            Shape shape;
+            Stage stage = (Stage) sizeSlider.getScene().getWindow();
+            var action = stage.getTitle();
+            switch (action) {
+                case "Create Circle" -> shape = new MyCircle(shapeNameField.getText(), size, paint);
+                case "Create Square" -> shape = new MySquare(shapeNameField.getText(), size, paint);
+                case "Create Triangle" -> shape = new MyTriangle(shapeNameField.getText(),  size, paint);
+                default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
+            }
+            SelectedShape.getInstance().setSelectedShape(shape);
+            DrawnShapesMenu.getInstance().addShape((ShapeProperties) shape);
+            stage.close();
+            InformationTextProvider.getInformationTextProperty().set("Click on the canvas to add your shape.");
         }
-        SelectedShape.getInstance().setSelectedShape(shape);
-        SavedShapes.getInstance().addShape(shape);
-        stage.close();
     }
+
+
+    private boolean allFieldsHaveValues() {
+        if (shapeNameField == null || paint == null)
+            return false;
+
+        return shapeNameField.getText().length() > 0
+                && size > 0.0;
+    }
+
 
     public double getSize() {
         return size;

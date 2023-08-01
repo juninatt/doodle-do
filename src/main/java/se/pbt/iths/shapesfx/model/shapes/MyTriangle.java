@@ -2,8 +2,9 @@ package se.pbt.iths.shapesfx.model.shapes;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Polygon;
+import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
 
-public class MyTriangle extends Polygon {
+public class MyTriangle extends Polygon implements ShapeProperties {
 
     private String name;
     private Paint paint;

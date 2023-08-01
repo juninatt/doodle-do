@@ -2,8 +2,9 @@ package se.pbt.iths.shapesfx.model.shapes;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
 
-public class MySquare extends Rectangle {
+public class MySquare extends Rectangle implements ShapeProperties {
 
     private String name;
     private Paint paint;

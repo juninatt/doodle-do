@@ -2,26 +2,29 @@ package se.pbt.iths.shapesfx.modelmanagement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.shape.Shape;
+import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
 
-public class SavedShapes {
+// TODO: Make thread safe
+// TODO: Return unmodifiable list
+// TODO: Forbid duplicate shape names
+public class DrawnShapesMenu {
 
-    public static SavedShapes instance;
+    public static DrawnShapesMenu instance;
 
-    ObservableList<Shape> storedShapes;
+    ObservableList<ShapeProperties> storedShapes;
 
-    public SavedShapes() {
+    public DrawnShapesMenu() {
         storedShapes = FXCollections.observableArrayList();
     }
 
-    public static SavedShapes getInstance() {
+    public static DrawnShapesMenu getInstance() {
         if (instance == null) {
-            instance = new SavedShapes();
+            instance = new DrawnShapesMenu();
         }
         return instance;
     }
 
-    public void addShape(Shape shape) {
+    public void addShape(ShapeProperties shape) {
         if (shape != null) {
             storedShapes.add(shape);
         } else {
@@ -29,7 +32,7 @@ public class SavedShapes {
         }
     }
 
-    public void removeShape(Shape shape) {
+    public void removeShape(ShapeProperties shape) {
         if (shape != null) {
             storedShapes.remove(shape);
         } else {
@@ -37,7 +40,7 @@ public class SavedShapes {
         }
     }
 
-    public ObservableList<Shape> getSavedShapes() {
+    public ObservableList<ShapeProperties> getSavedShapes() {
         return storedShapes;
     }
 }

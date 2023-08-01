@@ -2,8 +2,9 @@ package se.pbt.iths.shapesfx.model.shapes;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
 
-public class MyCircle extends Circle {
+public class MyCircle extends Circle implements ShapeProperties {
 
     private String name;
     private Paint paint;

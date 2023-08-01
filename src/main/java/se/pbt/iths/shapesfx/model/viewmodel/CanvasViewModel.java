@@ -33,11 +33,11 @@ public class CanvasViewModel {
             graphicsContext.setFill(square.getPaint());
             graphicsContext.fillRect(centerX, centerY, square.getWidth(), square.getHeight());
         } catch (IllegalArgumentException illegalArgumentException) {
-            throw new IllegalArgumentException("Problem when applying the square values to the graphics context in " + this.getClass() + ". " + illegalArgumentException.getMessage());
+            throw new DrawingException("Error occurred when creating Square: " + square + ". " + illegalArgumentException.getMessage());
         }
     }
 
-    public void drawCircle(MyCircle circle, double x, double y) throws DrawingException{
+    public void drawCircle(MyCircle circle, double x, double y) throws DrawingException {
 
         if (circle == null || graphicsContext == null)
             throw new NullPointerException("Circle or graphics context is null in " + this.getClass());
@@ -46,7 +46,7 @@ public class CanvasViewModel {
             graphicsContext.setFill(circle.getPaint());
             graphicsContext.fillOval(x - circle.getRadius() / 2, y - circle.getRadius() / 2, circle.getRadius(), circle.getRadius());
         } catch (IllegalArgumentException illegalArgumentException) {
-            throw new IllegalArgumentException("Problem when applying the circle values to the graphics context in " + this.getClass() + ". " + illegalArgumentException.getMessage());
+            throw new DrawingException("Error occurred when creating Circle: " + circle + ". " + illegalArgumentException.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class CanvasViewModel {
             graphicsContext.setFill(triangle.getPaint());
             graphicsContext.fillPolygon(xPoints, yPoints, 3);
         } catch (IllegalArgumentException illegalArgumentException) {
-            throw new IllegalArgumentException("Problem when applying the triangle values to the graphics context in " + this.getClass() + ". " + illegalArgumentException.getMessage());
+            throw new DrawingException("Error occurred when creating Triangle: " + triangle + ". " + illegalArgumentException.getMessage());
         }
     }
 

@@ -15,13 +15,12 @@
     <top>
         <VBox spacing="10.0">
             <MenuBar>
-                <Menu text="Draw">
+                <Menu text="Draw new">
                     <MenuItem text="Circle" onAction="#handleDrawCircle"/>
                     <MenuItem text="Triangle" onAction="#handleDrawTriangle"/>
                     <MenuItem text="Square" onAction="#handleDrawSquare"/>
                 </Menu>
-                <Menu text="Gallery">
-                    <!-- To be filled with created shapes -->
+                <Menu fx:id="drawnShapesMenu" text="Drawn shapes">
                 </Menu>
                 <Menu text="Options">
                     <MenuItem text="Edit" onAction="#handleOptionsEdit"/>
