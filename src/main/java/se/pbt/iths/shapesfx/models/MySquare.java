@@ -1,20 +1,19 @@
-package se.pbt.iths.shapesfx.model.shapes;
+package se.pbt.iths.shapesfx.models;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Polygon;
-import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
+import javafx.scene.shape.Rectangle;
+import se.pbt.iths.shapesfx.interfaces.Drawable;
 
-public class MyTriangle extends Polygon implements ShapeProperties {
+public class MySquare extends Rectangle implements Drawable {
 
     private String name;
     private Paint paint;
-    double size;
     private boolean selected;
 
-    public MyTriangle(String name, double size, Paint paint) {
-        super();
+    public MySquare(String name, double size, Paint paint) {
+        super(size, size);
         this.name = name;
-        this.size = size;
         this.paint = paint;
         this.selected = false;
         setFill(paint);
@@ -26,14 +25,6 @@ public class MyTriangle extends Polygon implements ShapeProperties {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public double getSize() {
-        return size;
-    }
-
-    public void setSize(double size) {
-        this.size = size;
     }
 
     public Paint getPaint() {
@@ -52,4 +43,14 @@ public class MyTriangle extends Polygon implements ShapeProperties {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
+
+    @Override
+    public void draw(GraphicsContext gc, double x, double y) {
+        double sideLength = getWidth();
+        double centerX = x - sideLength / 2;
+        double centerY = y - sideLength / 2;
+        gc.setFill(getPaint());
+        gc.fillRect(centerX, centerY, getWidth(), getHeight());
+    }
 }
+

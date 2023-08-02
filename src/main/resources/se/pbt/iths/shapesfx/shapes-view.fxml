@@ -16,9 +16,9 @@
         <VBox spacing="10.0">
             <MenuBar>
                 <Menu text="Draw new">
-                    <MenuItem text="Circle" onAction="#handleDrawCircle"/>
-                    <MenuItem text="Triangle" onAction="#handleDrawTriangle"/>
-                    <MenuItem text="Square" onAction="#handleDrawSquare"/>
+                    <MenuItem text="Circle" onAction="#openCircleCreationWindow"/>
+                    <MenuItem text="Triangle" onAction="#openTriangleCreationWindow"/>
+                    <MenuItem text="Square" onAction="#openSquareCreationWindow"/>
                 </Menu>
                 <Menu fx:id="drawnShapesMenu" text="Drawn shapes">
                 </Menu>

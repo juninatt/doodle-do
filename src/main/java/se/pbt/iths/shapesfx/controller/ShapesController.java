@@ -6,14 +6,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Shape;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.exceptions.DrawingException;
-import se.pbt.iths.shapesfx.model.shapes.MyCircle;
-import se.pbt.iths.shapesfx.model.shapes.MySquare;
-import se.pbt.iths.shapesfx.model.shapes.MyTriangle;
-import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
+import se.pbt.iths.shapesfx.interfaces.Drawable;
+import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
+import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.utils.MenuBarBinder;
 import se.pbt.iths.shapesfx.view.canvas.CanvasView;
@@ -42,6 +39,8 @@ public class ShapesController {
     /**
      * Initializes the ShapesController.
      * Sets the margin for the canvasView and displays a welcome message in the informationLabel.
+     * Instantiates a new MenuBarBinder object and binds the menu items from the drawnShapesMenu.
+     * Binds the informationText text property to the text property provided by InformationTextProvider.
      */
     public void initialize() {
         VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
@@ -50,21 +49,20 @@ public class ShapesController {
 
         informationText.textProperty().bind(InformationTextProvider.getInformationTextProperty());
         InformationTextProvider.getInformationTextProperty().set("Welcome!");
-
     }
 
     @FXML
-    private void handleDrawCircle() {
+    private void openCircleCreationWindow() {
         openShapeCreationWindow(CREATE_CIRCLE_TITLE);
     }
 
     @FXML
-    private void handleDrawTriangle() {
+    private void openTriangleCreationWindow() {
         openShapeCreationWindow(CREATE_TRIANGLE_TITLE);
     }
 
     @FXML
-    private void handleDrawSquare() {
+    private void openSquareCreationWindow() {
         openShapeCreationWindow(CREATE_SQUARE_TITLE);
     }
 
@@ -79,23 +77,20 @@ public class ShapesController {
     private void handleCanvasClick(MouseEvent event) {
         double x = event.getX();
         double y = event.getY();
-        var shape = SelectedShape.getInstance().getSelectedShape();
+        var shape = (Drawable) SelectedShape.getInstance().getSelectedShape();
         if (shape == null)
             InformationTextProvider.getInformationTextProperty().set("Draw new shape or select old one to add it to the canvas.");
         else {
             try {
-                switch (shape.getClass().getSimpleName()) {
-                    case "MyCircle" -> drawCircle(shape, x, y);
-                    case "MySquare" -> drawSquare(shape, x, y);
-                    case "MyTriangle" -> drawTriangle((MyTriangle) shape, x, y);
-                    default -> informationText.setText("Current shape is not recognized. If problem persists contact support");
-                }
+                shape.draw(canvasView.getCanvasNode().getGraphicsContext2D(), x, y);
+                DrawnShapesMenu.getInstance().addShape(shape);
+
                 InformationTextProvider.getInformationTextProperty().set("Beautiful!");
                 SelectedShape.getInstance().reset();
-            } catch (DrawingException drawingException) {
+            } catch (IllegalArgumentException illegalArgumentException) {
                 InformationTextProvider.getInformationTextProperty().set("Application failed to draw your shape.");
-                drawingException.printStackTrace();
-                throw new RuntimeException("Failed to draw shape. " + drawingException.getMessage());
+                illegalArgumentException.printStackTrace();
+                throw new RuntimeException("Failed to draw shape. " + illegalArgumentException.getMessage());
             } catch (RuntimeException runtimeException) {
                 InformationTextProvider.getInformationTextProperty().set("Use the menu to create and draw a shape");
                 System.out.println(runtimeException.getMessage());
@@ -104,36 +99,36 @@ public class ShapesController {
     }
 
 
-    /**
-     * Draws a circle on the x and y coordinates of the canvas and then resets the current {@link SelectedShape}
-     */
-    private void drawCircle(Shape circle, double x, double y) throws DrawingException {
-        canvasView.drawCircle((MyCircle) circle, x, y);
-    }
-
-    /**
-     * Draws a square on the x and y coordinates of the canvas and then resets the current {@link SelectedShape}
-     */
-    private void drawSquare(Shape square, double x, double y) throws DrawingException{
-            canvasView.drawSquare((MySquare) square, x, y);
-    }
-
-    /**
-     * Draws a triangle on the x and y coordinates of the canvas and then resets the current {@link SelectedShape}
-     */
-    private void drawTriangle(MyTriangle triangle, double x, double y) throws DrawingException {
-        // Store triangle side length divided by two to configure triangle center on canvas
-        var distanceFromCenter = triangle.getSize() / 2;
-
-        // Create two arrays holding the x- and y-coordinates of the triangle, based on the coordinates of the mouse click on the canvas
-        var xCoordinates = new double[]{x, x - distanceFromCenter, x + distanceFromCenter};
-        var yCoordinates = new double[]{y - distanceFromCenter, y + distanceFromCenter, y + distanceFromCenter};
-
-        // Add points to triangle
-        triangle.getPoints().setAll(xCoordinates[0], yCoordinates[0], xCoordinates[1], yCoordinates[1], xCoordinates[2], yCoordinates[2]);
-
-        canvasView.drawTriangle(triangle, xCoordinates, yCoordinates);
-    }
+//    /**
+//     * Draws a circle on the x and y coordinates of the canvas and then resets the current {@link SelectedShape}
+//     */
+//    private void drawCircle(Shape circle, double x, double y) throws DrawingException {
+//        canvasView.drawCircle((MyCircle) circle, x, y);
+//    }
+//
+//    /**
+//     * Draws a square on the x and y coordinates of the canvas and then resets the current {@link SelectedShape}
+//     */
+//    private void drawSquare(Shape square, double x, double y) throws DrawingException{
+//            canvasView.drawSquare((MySquare) square, x, y);
+//    }
+//
+//    /**
+//     * Draws a triangle on the x and y coordinates of the canvas and then resets the current {@link SelectedShape}
+//     */
+//    private void drawTriangle(MyTriangle triangle, double x, double y) throws DrawingException {
+//        // Store triangle side length divided by two to configure triangle center on canvas
+//        var distanceFromCenter = triangle.getSize() / 2;
+//
+//        // Create two arrays holding the x- and y-coordinates of the triangle, based on the coordinates of the mouse click on the canvas
+//        var xCoordinates = new double[]{x, x - distanceFromCenter, x + distanceFromCenter};
+//        var yCoordinates = new double[]{y - distanceFromCenter, y + distanceFromCenter, y + distanceFromCenter};
+//
+//        // Add points to triangle
+//        triangle.getPoints().setAll(xCoordinates[0], yCoordinates[0], xCoordinates[1], yCoordinates[1], xCoordinates[2], yCoordinates[2]);
+//
+//        canvasView.drawTriangle(triangle, xCoordinates, yCoordinates);
+//    }
 
     /**
      * Opens the shape creation window with the specified title. The shape creation window allows the user to set the size and color of the shape

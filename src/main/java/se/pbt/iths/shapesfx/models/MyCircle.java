@@ -1,21 +1,20 @@
-package se.pbt.iths.shapesfx.model.shapes;
+package se.pbt.iths.shapesfx.models;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
-import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
+import javafx.scene.shape.Circle;
+import se.pbt.iths.shapesfx.interfaces.Drawable;
 
-public class MySquare extends Rectangle implements ShapeProperties {
+public class MyCircle extends Circle implements Drawable {
 
     private String name;
     private Paint paint;
     private boolean selected;
 
-    public MySquare(String name, double size, Paint paint) {
-        super(size, size);
+    public MyCircle(String name, double radius, Paint paint) {
+        super(radius);
         this.name = name;
         this.paint = paint;
-        this.selected = false;
-        setFill(paint);
     }
 
     public String getName() {
@@ -41,6 +40,12 @@ public class MySquare extends Rectangle implements ShapeProperties {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    @Override
+    public void draw(GraphicsContext gc, double x, double y) {
+        gc.setFill(getPaint());
+        gc.fillOval(x - getRadius() / 2, y - getRadius() / 2, getRadius(), getRadius());
     }
 }
 

@@ -1,10 +1,10 @@
-package se.pbt.iths.shapesfx.modelmanagement;
+package se.pbt.iths.shapesfx.modelsmanagement;
 
-import javafx.scene.shape.Shape;
+import se.pbt.iths.shapesfx.interfaces.Drawable;
 
 public class SelectedShape {
     private static SelectedShape instance;
-    private Shape selectedShape;
+    private Drawable selectedShape;
 
     private SelectedShape() {
         // Private constructor to prevent direct instantiation
@@ -17,11 +17,11 @@ public class SelectedShape {
         return instance;
     }
 
-    public void setSelectedShape(Shape shape) {
+    public void setSelectedShape(Drawable shape) {
         selectedShape = shape;
     }
 
-    public Shape getSelectedShape() {
+    public Drawable getSelectedShape() {
         return selectedShape;
     }
 

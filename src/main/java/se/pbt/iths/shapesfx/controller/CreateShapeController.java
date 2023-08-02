@@ -5,14 +5,13 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Shape;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
-import se.pbt.iths.shapesfx.model.shapes.MyCircle;
-import se.pbt.iths.shapesfx.model.shapes.MySquare;
-import se.pbt.iths.shapesfx.model.shapes.MyTriangle;
-import se.pbt.iths.shapesfx.modelmanagement.DrawnShapesMenu;
-import se.pbt.iths.shapesfx.modelmanagement.SelectedShape;
+import se.pbt.iths.shapesfx.interfaces.Drawable;
+import se.pbt.iths.shapesfx.models.MyCircle;
+import se.pbt.iths.shapesfx.models.MySquare;
+import se.pbt.iths.shapesfx.models.MyTriangle;
+import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
+import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 
 /**
@@ -56,7 +55,7 @@ public class CreateShapeController {
         if (!allFieldsHaveValues()) {
             InformationTextProvider.getInformationTextProperty().set("All of the shape's properties must have a value");
         } else {
-            Shape shape;
+            Drawable shape;
             Stage stage = (Stage) sizeSlider.getScene().getWindow();
             var action = stage.getTitle();
             switch (action) {
@@ -66,7 +65,6 @@ public class CreateShapeController {
                 default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
             }
             SelectedShape.getInstance().setSelectedShape(shape);
-            DrawnShapesMenu.getInstance().addShape((ShapeProperties) shape);
             stage.close();
             InformationTextProvider.getInformationTextProperty().set("Click on the canvas to add your shape.");
         }
