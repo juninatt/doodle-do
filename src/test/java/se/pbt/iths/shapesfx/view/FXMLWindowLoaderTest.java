@@ -1,9 +1,11 @@
-package se.pbt.iths.shapesfx.view.window;
+package se.pbt.iths.shapesfx.view;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
+
 import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;

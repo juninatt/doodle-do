@@ -19,15 +19,12 @@ public class MenuBarBinder {
 
     public void bindMenuItems() {
         updateMenuItems();
-        DrawnShapesMenu.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeProperties>) change -> {
-            updateMenuItems();
-        });
+        DrawnShapesMenu.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeProperties>) change -> updateMenuItems());
     }
 
     private void updateMenuItems() {
         menu.getItems().clear();
         ObservableList<Drawable> shapeProperties = DrawnShapesMenu.getInstance().getSavedShapes();
-        System.out.println("Updating in binder class: " + shapeProperties);
         if (shapeProperties.isEmpty()) {
             menu.getItems().add(new MenuItem("Empty"));
         } else {

@@ -7,7 +7,7 @@
 <?import se.pbt.iths.shapesfx.view.canvas.CanvasView?>
 <?import java.net.URL?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.iths.shapesfx.controller.ShapesController">
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="se.pbt.iths.shapesfx.controller.MainWindowController">
     <stylesheets>
         <URL value="@style.css" />
     </stylesheets>
@@ -15,17 +15,17 @@
     <top>
         <VBox spacing="10.0">
             <MenuBar>
-                <Menu text="Draw new">
-                    <MenuItem text="Circle" onAction="#openCircleCreationWindow"/>
-                    <MenuItem text="Triangle" onAction="#openTriangleCreationWindow"/>
-                    <MenuItem text="Square" onAction="#openSquareCreationWindow"/>
+                <Menu fx:id="drawNewShapeMenu" text="Draw new">
+                    <MenuItem text="Circle" />
+                    <MenuItem text="Triangle" />
+                    <MenuItem text="Square" />
                 </Menu>
                 <Menu fx:id="drawnShapesMenu" text="Drawn shapes">
                 </Menu>
-                <Menu text="Options">
-                    <MenuItem text="Edit" onAction="#handleOptionsEdit"/>
-                    <MenuItem text="Save" onAction="#handleOptionSave"/>
-                    <MenuItem text="Load" onAction="#handleOptionLoad"/>
+                <Menu fx:id="optionsMenu" text="Options">
+                    <MenuItem text="Edit"/>
+                    <MenuItem text="Save"/>
+                    <MenuItem text="Load"/>
                 </Menu>
             </MenuBar>
         </VBox>

@@ -6,7 +6,7 @@
 <?import javafx.scene.paint.Color?>
 
 <?import java.net.URL?>
-<GridPane xmlns:fx="http://javafx.com/fxml" alignment="CENTER" hgap="10" vgap="10" fx:controller="se.pbt.iths.shapesfx.controller.CreateShapeController">
+<GridPane xmlns:fx="http://javafx.com/fxml" alignment="CENTER" hgap="10" vgap="10" fx:controller="se.pbt.iths.shapesfx.controller.CreateShapeWindowController">
     <stylesheets>
         <URL value="@style.css" />
     </stylesheets>
