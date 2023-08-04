@@ -2,7 +2,7 @@ package se.pbt.iths.shapesfx.modelsmanagement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import se.pbt.iths.shapesfx.interfaces.Drawable;
+import se.pbt.iths.shapesfx.models.ShapeTemplate;
 
 /**
  * The DrawnShapesMenu class manages the shapes created by the user.
@@ -11,7 +11,7 @@ import se.pbt.iths.shapesfx.interfaces.Drawable;
  * The shapes are stored in an ObservableList to notify any observers of changes.
  */
 public class DrawnShapesMenu {
-    private final ObservableList<Drawable> storedShapes;
+    private final ObservableList<ShapeTemplate> storedShapes;
 
 
     public DrawnShapesMenu() {
@@ -36,7 +36,7 @@ public class DrawnShapesMenu {
      * @param newShape The shape to be added.
      * @throws IllegalArgumentException if the shape is null or if the shape's name is already in use.
      */
-    public synchronized void addShape(Drawable newShape) {
+    public synchronized void addShape(ShapeTemplate newShape) {
         boolean nameExists = storedShapes.stream()
                 .anyMatch(storedShape -> storedShape.getName().equals(newShape.getName()));
 
@@ -56,7 +56,7 @@ public class DrawnShapesMenu {
      * @param shape The shape to be removed.
      * @throws IllegalArgumentException if the shape is null.
      */
-    public synchronized void removeShape(Drawable shape) {
+    public synchronized void removeShape(ShapeTemplate shape) {
         if (shape != null) {
             storedShapes.remove(shape);
         } else {
@@ -69,7 +69,7 @@ public class DrawnShapesMenu {
      *
      * @return the ObservableList of stored shapes
      */
-    public synchronized ObservableList<Drawable> getSavedShapes() {
+    public synchronized ObservableList<ShapeTemplate> getSavedShapes() {
         return storedShapes;
     }
 

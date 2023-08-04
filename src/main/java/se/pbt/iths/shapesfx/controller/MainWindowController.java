@@ -30,7 +30,6 @@ public class MainWindowController {
     private static final String NO_SHAPE_SELECTED_MESSAGE = "Draw new shape or select old one to add it to the canvas.";
     private static final String RESET_INFORMATION_TEXT = "Use the menu to create and draw a shape";
 
-
     @FXML
     private CanvasView canvasView;
     @FXML
@@ -41,7 +40,6 @@ public class MainWindowController {
     private Menu optionsMenu;
     @FXML
     private Label informationText;
-
 
 
     /**
@@ -66,6 +64,7 @@ public class MainWindowController {
     @FXML
     private void handleCanvasClick(MouseEvent event) {
         Drawable shapeToDraw = SelectedShape.getInstance().getSelectedShape();
+
         if (shapeToDraw == null)
             handleNoSelectedShape();
         else {
@@ -168,16 +167,5 @@ public class MainWindowController {
     private void openShapeCreationWindow (String title){
         FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
         windowLoader.loadWindow();
-    }
-
-
-
-    public void handleOptionsEdit() {
-    }
-
-    public void handleOptionSave() {
-    }
-
-    public void handleOptionLoad() {
     }
 }

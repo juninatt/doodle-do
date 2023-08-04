@@ -1,10 +1,10 @@
 package se.pbt.iths.shapesfx.modelsmanagement;
 
-import se.pbt.iths.shapesfx.interfaces.Drawable;
+import se.pbt.iths.shapesfx.models.ShapeTemplate;
 
 public class SelectedShape {
     private static SelectedShape instance;
-    private Drawable selectedShape;
+    private ShapeTemplate selectedShape;
 
     private SelectedShape() {
         // Private constructor to prevent direct instantiation
@@ -17,11 +17,11 @@ public class SelectedShape {
         return instance;
     }
 
-    public void setSelectedShape(Drawable shape) {
+    public void setSelectedShape(ShapeTemplate shape) {
         selectedShape = shape;
     }
 
-    public Drawable getSelectedShape() {
+    public ShapeTemplate getSelectedShape() {
         return selectedShape;
     }
 

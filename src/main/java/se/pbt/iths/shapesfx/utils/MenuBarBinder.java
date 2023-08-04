@@ -4,8 +4,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import se.pbt.iths.shapesfx.interfaces.Drawable;
-import se.pbt.iths.shapesfx.interfaces.ShapeProperties;
+import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 
@@ -19,16 +18,16 @@ public class MenuBarBinder {
 
     public void bindMenuItems() {
         updateMenuItems();
-        DrawnShapesMenu.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeProperties>) change -> updateMenuItems());
+        DrawnShapesMenu.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuItems());
     }
 
     private void updateMenuItems() {
         menu.getItems().clear();
-        ObservableList<Drawable> shapeProperties = DrawnShapesMenu.getInstance().getSavedShapes();
+        ObservableList<ShapeTemplate> shapeProperties = DrawnShapesMenu.getInstance().getSavedShapes();
         if (shapeProperties.isEmpty()) {
             menu.getItems().add(new MenuItem("Empty"));
         } else {
-            for (Drawable shape : shapeProperties) {
+            for (ShapeTemplate shape : shapeProperties) {
                 MenuItem menuItem = new MenuItem(shape.getName());
                 menuItem.setOnAction(e -> {
                     SelectedShape.getInstance().setSelectedShape( shape);

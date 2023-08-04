@@ -6,10 +6,10 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.interfaces.Drawable;
-import se.pbt.iths.shapesfx.models.MyCircle;
-import se.pbt.iths.shapesfx.models.MySquare;
-import se.pbt.iths.shapesfx.models.MyTriangle;
+import se.pbt.iths.shapesfx.models.Circle;
+import se.pbt.iths.shapesfx.models.ShapeTemplate;
+import se.pbt.iths.shapesfx.models.Square;
+import se.pbt.iths.shapesfx.models.Triangle;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
@@ -60,13 +60,13 @@ public class CreateShapeWindowController {
         if (!allFieldsHaveValues()) {
             InformationTextProvider.getInformationTextProperty().set(SHAPE_PROPERTIES_REQUIRED);
         } else {
-            Drawable shape;
+            ShapeTemplate shape;
             Stage stage = (Stage) sizeSlider.getScene().getWindow();
             var action = stage.getTitle();
             switch (action) {
-                case "Circle" -> shape = new MyCircle(shapeNameField.getText(), size, paint);
-                case "Square" -> shape = new MySquare(shapeNameField.getText(), size, paint);
-                case "Triangle" -> shape = new MyTriangle(shapeNameField.getText(),  size, paint);
+                case "Circle" -> shape = new Circle(shapeNameField.getText(), paint, size);
+                case "Square" -> shape = new Square(shapeNameField.getText(), paint, size);
+                case "Triangle" -> shape = new Triangle(shapeNameField.getText(), paint, size);
                 default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
             }
             DrawnShapesMenu.getInstance().addShape(shape);
