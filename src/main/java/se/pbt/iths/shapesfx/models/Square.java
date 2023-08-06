@@ -12,6 +12,13 @@ public class Square extends ShapeTemplate {
         this.sideLength = sideLength;
     }
 
+    public double getSideLength() {
+        return sideLength;
+    }
+
+    public void setSideLength(double sideLength) {
+        this.sideLength = sideLength;
+    }
 
     @Override
     public void draw(GraphicsContext gc, double x, double y) {
@@ -21,12 +28,11 @@ public class Square extends ShapeTemplate {
         gc.fillRect(cx, cy, sideLength, sideLength);
     }
 
-    public double getSideLength() {
-        return sideLength;
-    }
-
-    public void setSideLength(double sideLength) {
-        this.sideLength = sideLength;
+    @Override
+    public boolean contains(double x, double y) {
+        var leftX = cx - sideLength / 2;
+        var topY = cy + sideLength / 2;
+        return x >= leftX && x <= leftX + sideLength && y >= topY && y <= topY + sideLength;
     }
 }
 

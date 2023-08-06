@@ -23,8 +23,18 @@ public class Circle extends ShapeTemplate {
 
     @Override
     public void draw(GraphicsContext gc, double x, double y) {
+        cx = x;
+        cy = y;
         gc.setFill(getPaint());
-        gc.fillOval(x - getRadius() / 2, y - getRadius() / 2, getRadius(), getRadius());
+        gc.fillOval(x - radius / 2, y - radius / 2, radius, radius);
+    }
+
+    @Override
+    public boolean contains(double x, double y) {
+        double dx = cx - x;
+        double dy = cy - y;
+        double distanceSquared = dx * dx + dy * dy;
+        return distanceSquared <= radius * radius;
     }
 }
 

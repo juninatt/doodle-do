@@ -1,22 +1,28 @@
 package se.pbt.iths.shapesfx.controller;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.interfaces.Drawable;
+import se.pbt.iths.shapesfx.enums.ActionType;
+import se.pbt.iths.shapesfx.models.ShapeTemplate;
+import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.utils.MenuActionUtils;
 import se.pbt.iths.shapesfx.utils.MenuBarBinder;
 import se.pbt.iths.shapesfx.view.canvas.CanvasView;
 import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
+
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 // TODO: Improve exception handling
 /**
@@ -29,6 +35,9 @@ public class MainWindowController {
     private static final String BEAUTIFUL_MESSAGE = "Beautiful!";
     private static final String NO_SHAPE_SELECTED_MESSAGE = "Draw new shape or select old one to add it to the canvas.";
     private static final String RESET_INFORMATION_TEXT = "Use the menu to create and draw a shape";
+    private static final String REMOVED_SHAPE_MESSAGE = "Removed shape with name: ";
+
+    private ActionType currentAction;
 
     @FXML
     private CanvasView canvasView;
@@ -37,7 +46,7 @@ public class MainWindowController {
     @FXML
     private Menu drawnShapesMenu;
     @FXML
-    private Menu optionsMenu;
+    private Menu selectMenu;
     @FXML
     private Label informationText;
 
@@ -52,41 +61,173 @@ public class MainWindowController {
         VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
         setUpMenuBar();
         setUpInformationLabel();
+        currentAction = ActionType.EMPTY;
+    }
+
+    // Private Helper Methods to initialize components
+
+    /**
+     * Initializes the menu bar by setting up item actions and binding the menu to saved shapes.
+     */
+    private void setUpMenuBar() {
+        setUpSelectMenu();
+
+        MenuActionUtils.bindActionToMenuItems(drawNewShapeMenu, this::openShapeCreationWindow);
+
+        new MenuBarBinder(drawnShapesMenu).bindMenuItems();
     }
 
     /**
-     * Handles the click event on the canvas.
-     * Retrieves the selected shape from the SelectedShape manager and draws it on the canvas
-     * at the clicked position (x, y).
+     * Initializes the select menu by associating each menu item with its corresponding action.
+     * Iterates over each menu item in the select menu and sets the action event handler.
+     */
+    private void setUpSelectMenu() {
+        IntStream.range(0, selectMenu.getItems().size())
+                .forEach(index -> {
+                    MenuItem menuItem = selectMenu.getItems().get(index);
+                    menuItem.setOnAction(this::setAction);
+                });
+    }
+
+
+    /**
+     * Updates the current action based on the selected menu item's text.
+     * The text is converted to its corresponding {@link ActionType} enumeration.
+     *
+     * @param event The action event from the clicked menu item.
+     */
+    private void setAction(ActionEvent event) {
+        var menuItem = (MenuItem) event.getSource();
+        var text = menuItem.getText().toUpperCase();
+        try {
+            currentAction = ActionType.valueOf(text);
+        } catch (IllegalArgumentException illegalArgumentException) {
+            illegalArgumentException.printStackTrace();
+            currentAction = ActionType.EMPTY;
+        }
+    }
+
+
+    /**
+     * Set a welcome message to the label and bind it to {@link InformationTextProvider}.
+     */
+    private void setUpInformationLabel() {
+        informationText.textProperty().bind(InformationTextProvider.getInformationTextProperty());
+        InformationTextProvider.getInformationTextProperty().set(WELCOME_MESSAGE);
+    }
+
+    // Event handling methods
+
+    /**
+     * Handles the click event on the canvas, performing actions based on the currentAction type.
+     * Depending on the current action, this method may delegate to methods responsible for drawing,
+     * editing, saving, rotating, or removing a shape at the clicked position (x, y).
      *
      * @param event The MouseEvent representing the canvas click event.
      */
     @FXML
     private void handleCanvasClick(MouseEvent event) {
-        Drawable shapeToDraw = SelectedShape.getInstance().getSelectedShape();
+        switch (currentAction) {
+            case DRAW -> attemptDrawShape(event);
+            case EDIT -> attemptEditShape(event);
+            case SAVE -> attemptSaveShape(event);
+            case ROTATE -> attemptRotateShape(event);
+            case REMOVE -> attemptRemoveShape(event);
 
-        if (shapeToDraw == null)
-            handleNoSelectedShape();
-        else {
-            drawShape(event, shapeToDraw);
         }
     }
 
+    // Shape handling methods
+
+    // TODO: Add proper exception handling
+    // TODO: Reduce number of method calls
+    private void attemptEditShape(MouseEvent event) {
+        SelectedShape.getInstance().setSelectedShape(findFirstShapeAtClickPoint(event)
+                .orElse(null));
+
+        // TODO: Add window for editing shapes without redrawing them etc with old values pre loaded
+        clearCanvas();
+        redrawShapes();
+    }
+
+    private void attemptSaveShape(MouseEvent event) {
+        // TODO: Add logic to save shapes on the canvas
+    }
+
+    private void attemptRotateShape(MouseEvent event) {
+        // TODO: Add logic to save shapes on the canvas
+    }
+
     /**
-     * Attempts to draw the provided shape at the location of the MouseEvent on the canvas.
-     * If the shape is drawn successfully, the shape is added to the DrawnShapesMenu,
-     * a success message is displayed, and the current selection is reset.
+     * Attempts to draw the selected shape on the canvas at the mouse event position.
+     * Handles successful drawing or provides feedback if no shape is selected.
      *
-     * @param event MouseEvent representing the canvas click, provides the coordinates for where the shape should be drawn.
-     * @param shapeToDraw The Drawable shape to be drawn on the canvas.
+     * @param event The MouseEvent representing the canvas click event.
      */
-    private void drawShape(MouseEvent event, Drawable shapeToDraw) {
-        try {
-            performDraw(event, shapeToDraw);
-            handleSuccessfulDraw();
-        } catch (RuntimeException runtimeException) {
-            handleException(runtimeException);
+    private void attemptDrawShape(MouseEvent event) {
+        var shapeToDraw = SelectedShape.getInstance().getSelectedShape();
+
+        if (shapeToDraw == null)
+            InformationTextProvider.getInformationTextProperty().set(NO_SHAPE_SELECTED_MESSAGE);
+        else {
+            try {
+                performDraw(event.getX(), event.getY(), shapeToDraw);
+                handleSuccessfulDraw();
+            } catch (RuntimeException runtimeException) {
+                resetInformationText();
+                runtimeException.printStackTrace();
+            }
         }
+    }
+
+
+    /**
+     * Attempts to remove the shape at the mouse event position.
+     * Removes the shape if found, or provides feedback if not found.
+     *
+     * @param event The MouseEvent representing the canvas click event.
+     */
+    private void attemptRemoveShape(MouseEvent event) {
+        var optionalShape = findFirstShapeAtClickPoint(event);
+
+        if (optionalShape.isPresent()) {
+            removeShape(optionalShape.get());
+        } else {
+            InformationTextProvider.getInformationTextProperty().set("No shape found at the clicked point. Please click on a shape to remove it!");
+        }
+    }
+
+    // Drawing and Canvas Manipulation Methods
+
+    /**
+     * Removes the specified shape template from the drawn shapes menu and updates the canvas.
+     *
+     * @param shapeTemplate The shape template to remove.
+     */
+    private void removeShape(ShapeTemplate shapeTemplate) {
+        DrawnShapesMenu.getInstance().removeShape(shapeTemplate);
+        clearCanvas();
+        redrawShapes();
+        InformationTextProvider.getInformationTextProperty().set(REMOVED_SHAPE_MESSAGE + shapeTemplate.getName());
+    }
+
+    /**
+     * Finds the first shape template at the clicked point on the canvas.
+     *
+     * @param event The mouse event containing the clicked point's coordinates.
+     * @return An optional containing the found shape template, or an empty optional if no shape was found.
+     */
+    private Optional<ShapeTemplate> findFirstShapeAtClickPoint(MouseEvent event) {
+        return DrawnShapesMenu.getInstance().getSavedShapes().stream()
+                .filter(shape -> shape.contains(event.getX(), event.getY()))
+                .findFirst();
+    }
+
+    /**
+     * Redraws all the shapes saved in the DrawnShapesMenu on the canvas.
+     */
+    private void redrawShapes() {
+        DrawnShapesMenu.getInstance().getSavedShapes().forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
     }
 
     /**
@@ -99,34 +240,31 @@ public class MainWindowController {
     }
 
     /**
-     * Handles the exception when an error occurs during shape drawing.
-     * Resets the information text and prints the stack trace of the exception.
+     * Draws the specified shape template at the given coordinates on the canvas.
      *
-     * @param exception The exception to handle.
+     * @param x      The x-coordinate where the shape will be drawn.
+     * @param y      The y-coordinate where the shape will be drawn.
+     * @param shape  The shape template to draw.
      */
-    private void handleException(Exception exception) {
-        resetInformationText();
-        exception.printStackTrace();
+    private void performDraw(double x, double y, ShapeTemplate shape) {
+        try {
+            shape.draw(canvasView.getCanvasNode().getGraphicsContext2D(), x, y);
+            shape.setCx(x);
+            shape.setCy(y);
+        } catch (RuntimeException exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**
-     * Draws the provided shape at the location of the mouse event on the canvas.
-     *
-     * @param event The MouseEvent representing the location on the canvas where the user clicked.
-     * @param shape The Drawable shape to be drawn on the canvas.
+     * Clears the entire canvas, removing all drawn content.
      */
-    private void performDraw(MouseEvent event, Drawable shape) {
-        double x = event.getX();
-        double y = event.getY();
-        shape.draw(canvasView.getCanvasNode().getGraphicsContext2D(), x, y);
+    private void clearCanvas() {
+        GraphicsContext gc = canvasView.getCanvasNode().getGraphicsContext2D();
+        gc.clearRect(0, 0, gc.getCanvas().getWidth(), gc.getCanvas().getHeight());
     }
 
-    /**
-     * Handles the event when no shape is selected.
-     */
-    private void handleNoSelectedShape() {
-        InformationTextProvider.getInformationTextProperty().set(NO_SHAPE_SELECTED_MESSAGE);
-    }
+    // Utility and Miscellaneous Methods
 
     /**
      * Resets the information text to its default value.
@@ -135,28 +273,7 @@ public class MainWindowController {
         InformationTextProvider.getInformationTextProperty().set(RESET_INFORMATION_TEXT);
     }
 
-    /**
-     * Set up the menu bar with custom menu items actions in {@link MenuActionUtils}
-     * and bind menu to saved shapes in {@link MenuBarBinder}.
-     */
-    private void setUpMenuBar() {
-
-        EventHandler<ActionEvent> shapeMenuAction = MenuActionUtils.createShapeMenuAction(this::openShapeCreationWindow);
-
-        drawNewShapeMenu.getItems().forEach(menuItem -> menuItem.setOnAction(shapeMenuAction));
-
-        new MenuBarBinder(drawnShapesMenu).bindMenuItems();
-    }
-
-    /**
-     * Set a welcome message to the label and bind it to {@link InformationTextProvider}.
-     */
-    private void setUpInformationLabel() {
-        informationText.textProperty().bind(InformationTextProvider.getInformationTextProperty());
-        InformationTextProvider.getInformationTextProperty().set(WELCOME_MESSAGE);
-    }
-
-    // TODO: Extract logic to separate class
+    // TODO: Extract window creation and setup logic to separate class
     /**
      * Opens the shape creation window with the specified title. The shape creation window allows the user to set the size and color of the shape
      * before confirming and closing the window.
@@ -164,8 +281,9 @@ public class MainWindowController {
      *
      * @param title The title of the shape creation window.
      */
-    private void openShapeCreationWindow (String title){
+    private void  openShapeCreationWindow(String title) {
         FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
         windowLoader.loadWindow();
+        currentAction = ActionType.DRAW;
     }
 }

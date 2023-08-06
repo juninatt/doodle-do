@@ -25,6 +25,7 @@ public class CreateShapeWindowController {
     private static final String INITIALIZE_SHAPE_MESSAGE = "Set the size and color of your shape and press 'Confirm'.";
     private static final String SHAPE_PROPERTIES_REQUIRED = "All of the shape's properties must have a value";
     private static final String SHAPE_CREATION_SUCCESS = "Click on the canvas to add your shape.";
+    private static final String SHAPE_NAME_TAKEN = "Sorry but that name is taken.";
 
     private double size;
     private Paint paint;
@@ -63,16 +64,21 @@ public class CreateShapeWindowController {
             ShapeTemplate shape;
             Stage stage = (Stage) sizeSlider.getScene().getWindow();
             var action = stage.getTitle();
-            switch (action) {
-                case "Circle" -> shape = new Circle(shapeNameField.getText(), paint, size);
-                case "Square" -> shape = new Square(shapeNameField.getText(), paint, size);
-                case "Triangle" -> shape = new Triangle(shapeNameField.getText(), paint, size);
-                default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
+            var isDuplicateName = DrawnShapesMenu.getInstance().getSavedShapes().stream()
+                    .anyMatch(storedShape -> storedShape.getName().equals(shapeNameField.getText()));
+            if (!isDuplicateName) {
+                switch (action) {
+                    case "Circle" -> shape = new Circle(shapeNameField.getText(), paint, size);
+                    case "Square" -> shape = new Square(shapeNameField.getText(), paint, size);
+                    case "Triangle" -> shape = new Triangle(shapeNameField.getText(), paint, size);
+                    default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
+                }
+                DrawnShapesMenu.getInstance().addShape(shape);
+                SelectedShape.getInstance().setSelectedShape(shape);
+                stage.close();
+                InformationTextProvider.getInformationTextProperty().set(SHAPE_CREATION_SUCCESS);
             }
-            DrawnShapesMenu.getInstance().addShape(shape);
-            SelectedShape.getInstance().setSelectedShape(shape);
-            stage.close();
-            InformationTextProvider.getInformationTextProperty().set(SHAPE_CREATION_SUCCESS );
+            else InformationTextProvider.getInformationTextProperty().set(SHAPE_NAME_TAKEN);
         }
     }
 
