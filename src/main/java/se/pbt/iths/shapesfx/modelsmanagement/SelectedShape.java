@@ -28,4 +28,8 @@ public class SelectedShape {
     public void reset() {
         selectedShape = null;
     }
+
+    public String getName() {
+        return selectedShape.getName();
+    }
 }

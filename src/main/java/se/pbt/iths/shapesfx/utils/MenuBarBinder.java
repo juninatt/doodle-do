@@ -26,7 +26,7 @@ public class MenuBarBinder {
      */
     public void bindMenuItems() {
         updateMenuItems();
-        DrawnShapeStorage.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuItems());
+        DrawnShapeStorage.getInstance().getDrawnShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuItems());
     }
 
     /**
@@ -36,7 +36,7 @@ public class MenuBarBinder {
      */
     private void updateMenuItems() {
         menu.getItems().clear();
-        var drawnShapes = DrawnShapeStorage.getInstance().getSavedShapes();
+        var drawnShapes = DrawnShapeStorage.getInstance().getDrawnShapes();
         if (drawnShapes.isEmpty()) {
             menu.getItems().add(new MenuItem("Empty"));
         } else {

@@ -4,8 +4,9 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 import se.pbt.iths.shapesfx.interfaces.Drawable;
+import se.pbt.iths.shapesfx.interfaces.Updatable;
 
-public abstract class ShapeTemplate extends Shape implements Drawable {
+public abstract class ShapeTemplate extends Shape implements Drawable, Updatable {
     protected String name;
     protected Paint paint;
     protected double size;
@@ -110,5 +111,12 @@ public abstract class ShapeTemplate extends Shape implements Drawable {
 
     public void setSvgPathData(SVGPath svgPathData) {
         this.svgPathData = svgPathData;
+    }
+
+    @Override
+    public void update(String name, Paint paint, double size) {
+        this.name = name;
+        this.paint = paint;
+        this.size = size;
     }
 }

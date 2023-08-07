@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public record FXMLWindowLoader(Stage stage, String title, String fxmlFile, Modality modality) {
 
-    public void loadWindow() {
+    public Stage getWindowStage() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(ShapesApplication.class.getResource(fxmlFile));
             Parent root = fxmlLoader.load();
@@ -20,12 +20,12 @@ public record FXMLWindowLoader(Stage stage, String title, String fxmlFile, Modal
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }
+        return this.stage;
     }
 
     private void createModalStage(Parent parent) {
         stage.initModality(modality);
         stage.setTitle(title);
         stage.setScene(new Scene(parent));
-        stage.show();
     }
 }

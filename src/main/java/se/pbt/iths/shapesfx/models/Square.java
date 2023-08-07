@@ -20,7 +20,7 @@ public class Square extends ShapeTemplate {
     @Override
     public boolean contains(double x, double y) {
         var leftX = cx - size / 2;
-        var topY = cy + size / 2;
+        var topY = cy - size / 2;
         return x >= leftX && x <= leftX + size && y >= topY && y <= topY + size;
     }
 }

@@ -74,6 +74,7 @@ public class MainWindowController {
 
         MenuActionUtils.bindActionToMenuItems(drawNewShapeMenu, this::openShapeCreationWindow);
 
+        // TODO: Separate binding and setting actions for menu items
         new MenuBarBinder(drawnShapesMenu).bindMenuItems();
     }
 
@@ -133,7 +134,6 @@ public class MainWindowController {
             case SAVE -> attemptSaveShape(event);
             case ROTATE -> attemptRotateShape(event);
             case REMOVE -> attemptRemoveShape(event);
-
         }
     }
 
@@ -145,7 +145,7 @@ public class MainWindowController {
         SelectedShape.getInstance().setSelectedShape(findFirstShapeAtClickPoint(event)
                 .orElse(null));
 
-        // TODO: Add window for editing shapes without redrawing them etc with old values pre loaded
+        openEditShapeWindow("Edit shape: " + SelectedShape.getInstance().getSelectedShape().getName());
         clearCanvas();
         redrawShapes();
     }
@@ -218,7 +218,7 @@ public class MainWindowController {
      * @return An optional containing the found shape template, or an empty optional if no shape was found.
      */
     private Optional<ShapeTemplate> findFirstShapeAtClickPoint(MouseEvent event) {
-        return DrawnShapeStorage.getInstance().getSavedShapes().stream()
+        return DrawnShapeStorage.getInstance().getDrawnShapes().stream()
                 .filter(shape -> shape.contains(event.getX(), event.getY()))
                 .findFirst();
     }
@@ -227,7 +227,8 @@ public class MainWindowController {
      * Redraws all the shapes saved in the DrawnShapesMenu on the canvas.
      */
     private void redrawShapes() {
-        DrawnShapeStorage.getInstance().getSavedShapes().forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
+        DrawnShapeStorage.getInstance().getDrawnShapes()
+                .forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
     }
 
     /**
@@ -242,13 +243,15 @@ public class MainWindowController {
     /**
      * Draws the specified shape template at the given coordinates on the canvas.
      *
-     * @param x      The x-coordinate where the shape will be drawn.
-     * @param y      The y-coordinate where the shape will be drawn.
-     * @param shape  The shape template to draw.
+     * @param x     The x-coordinate where the shape will be drawn.
+     * @param y     The y-coordinate where the shape will be drawn.
+     * @param shape The shape template to draw.
      */
     private void performDraw(double x, double y, ShapeTemplate shape) {
         try {
-            shape.draw(canvasView.getCanvasNode().getGraphicsContext2D(), x, y);
+            var gc = canvasView.getCanvasNode().getGraphicsContext2D();
+            gc.setFill(shape.getFill());
+            shape.draw(gc, x, y);
             shape.setCx(x);
             shape.setCy(y);
         } catch (RuntimeException exception) {
@@ -274,6 +277,7 @@ public class MainWindowController {
     }
 
     // TODO: Extract window creation and setup logic to separate class
+
     /**
      * Opens the shape creation window with the specified title. The shape creation window allows the user to set the size and color of the shape
      * before confirming and closing the window.
@@ -281,9 +285,15 @@ public class MainWindowController {
      *
      * @param title The title of the shape creation window.
      */
-    private void  openShapeCreationWindow(String title) {
+    private void openShapeCreationWindow(String title) {
         FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
-        windowLoader.loadWindow();
+        windowLoader.getWindowStage().showAndWait();
         currentAction = ActionType.DRAW;
+    }
+
+    private void openEditShapeWindow(String title) {
+        FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "edit-shape-view.fxml", Modality.APPLICATION_MODAL);
+        windowLoader.getWindowStage().showAndWait();
+        currentAction = ActionType.EDIT;
     }
 }

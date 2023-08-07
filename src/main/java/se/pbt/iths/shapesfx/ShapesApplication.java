@@ -8,7 +8,7 @@ import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
 public class ShapesApplication extends Application {
     public void start(Stage stage) {
         FXMLWindowLoader shapesLoader = new FXMLWindowLoader(new Stage(), "Shapes", "main-view.fxml", Modality.APPLICATION_MODAL);
-        shapesLoader.loadWindow();
+        shapesLoader.getWindowStage().showAndWait();
     }
 
     public static void main(String[] args) {

@@ -4,6 +4,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 
+import java.util.Optional;
+
 /**
  * The DrawnShapesMenu class manages the shapes created by the user.
  * It follows the Singleton design pattern to ensure only one instance of this class exists.
@@ -11,11 +13,11 @@ import se.pbt.iths.shapesfx.models.ShapeTemplate;
  * The shapes are stored in an ObservableList to notify any observers of changes.
  */
 public class DrawnShapeStorage {
-    private final ObservableList<ShapeTemplate> storedShapes;
+    private final ObservableList<ShapeTemplate> drawnShapes;
 
 
     public DrawnShapeStorage() {
-        storedShapes = FXCollections.observableArrayList();
+        drawnShapes = FXCollections.observableArrayList();
     }
 
 
@@ -37,14 +39,14 @@ public class DrawnShapeStorage {
      * @throws IllegalArgumentException if the shape is null or if the shape's name is already in use.
      */
     public synchronized void addShape(ShapeTemplate newShape) {
-        boolean nameExists = storedShapes.stream()
+        boolean nameExists = drawnShapes.stream()
                 .anyMatch(storedShape -> storedShape.getName().equals(newShape.getName()));
 
         if (newShape != null) {
             if (nameExists) {
                 throw new IllegalArgumentException("Duplicate shape name is not allowed");
             }
-            storedShapes.add(newShape);
+            drawnShapes.add(newShape);
         } else {
             throw new IllegalArgumentException("Shape cannot be null");
         }
@@ -58,7 +60,7 @@ public class DrawnShapeStorage {
      */
     public synchronized void removeShape(ShapeTemplate shape) {
         if (shape != null) {
-            storedShapes.remove(shape);
+            drawnShapes.remove(shape);
         } else {
             throw new IllegalArgumentException("Shape cannot be null");
         }
@@ -69,10 +71,15 @@ public class DrawnShapeStorage {
      *
      * @return the ObservableList of stored shapes
      */
-    public synchronized ObservableList<ShapeTemplate> getSavedShapes() {
-        return storedShapes;
+    public synchronized ObservableList<ShapeTemplate> getDrawnShapes() {
+        return drawnShapes;
     }
 
+    public synchronized Optional<ShapeTemplate> getByName(String name) {
+        return drawnShapes.stream()
+                .filter(shape -> shape.getName().equals(name))
+                .findFirst();
+    }
     /**
      * The InstanceHolder is a private static class that contains the Singleton instance of DrawnShapesMenu.
      * It is initialized when getInstance() is first called, ensuring lazy initialization and thread-safety.

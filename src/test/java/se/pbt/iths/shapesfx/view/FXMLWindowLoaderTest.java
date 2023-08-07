@@ -18,7 +18,7 @@ public class FXMLWindowLoaderTest {
     @DisplayName("IllegalStateException should be thrown when no fxml file is found")
     void loadWindow_throwsIllegalStateException_WhenNoFxmlFileIsFound() {
         FXMLWindowLoader windowLoader = new FXMLWindowLoader(mockStage, "Test Window", "non existent file", Modality.NONE);
-        assertThrows(IllegalStateException.class, windowLoader::loadWindow);
+        assertThrows(IllegalStateException.class, windowLoader::getWindowStage);
     }
 
     @Test

@@ -58,23 +58,23 @@ public class CreateShapeWindowController {
      */
     @FXML
     private void confirmShapeButtonClicked() {
+        Stage stage = (Stage) sizeSlider.getScene().getWindow();
         if (!allFieldsHaveValues()) {
             InformationTextProvider.getInformationTextProperty().set(SHAPE_PROPERTIES_REQUIRED);
         } else {
-            ShapeTemplate shape;
-            Stage stage = (Stage) sizeSlider.getScene().getWindow();
+            String name = shapeNameField.getText();
+            ShapeTemplate newShape;
             var action = stage.getTitle();
-            var isDuplicateName = DrawnShapeStorage.getInstance().getSavedShapes().stream()
-                    .anyMatch(storedShape -> storedShape.getName().equals(shapeNameField.getText()));
-            if (!isDuplicateName) {
+            var duplicateName = DrawnShapeStorage.getInstance().getByName(name);
+            if (duplicateName.isEmpty()) {
                 switch (action) {
-                    case "Circle" -> shape = new Circle(shapeNameField.getText(), paint, size);
-                    case "Square" -> shape = new Square(shapeNameField.getText(), paint, size);
-                    case "Triangle" -> shape = new Triangle(shapeNameField.getText(), paint, size);
+                    case "Circle" -> newShape = new Circle(name, paint, size);
+                    case "Square" -> newShape = new Square(name, paint, size);
+                    case "Triangle" -> newShape = new Triangle(name, paint, size);
                     default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
                 }
-                DrawnShapeStorage.getInstance().addShape(shape);
-                SelectedShape.getInstance().setSelectedShape(shape);
+                DrawnShapeStorage.getInstance().addShape(newShape);
+                SelectedShape.getInstance().setSelectedShape(newShape);
                 stage.close();
                 InformationTextProvider.getInformationTextProperty().set(SHAPE_CREATION_SUCCESS);
             }
@@ -93,22 +93,5 @@ public class CreateShapeWindowController {
 
         return shapeNameField.getText().length() > 0
                 && size > 0.0;
-    }
-
-
-    public double getSize() {
-        return size;
-    }
-
-    public Paint getPaint() {
-        return paint;
-    }
-
-    public Slider getSizeSlider() {
-        return sizeSlider;
-    }
-
-    public ColorPicker getColorPicker() {
-        return colorPicker;
     }
 }
