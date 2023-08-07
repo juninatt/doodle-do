@@ -10,11 +10,11 @@ import se.pbt.iths.shapesfx.models.ShapeTemplate;
  * This single instance can be accessed globally, which provides a way to access the stored shapes from any other class.
  * The shapes are stored in an ObservableList to notify any observers of changes.
  */
-public class DrawnShapesMenu {
+public class DrawnShapeStorage {
     private final ObservableList<ShapeTemplate> storedShapes;
 
 
-    public DrawnShapesMenu() {
+    public DrawnShapeStorage() {
         storedShapes = FXCollections.observableArrayList();
     }
 
@@ -25,7 +25,7 @@ public class DrawnShapesMenu {
      *
      * @return the Singleton instance of DrawnShapesMenu
      */
-    public static DrawnShapesMenu getInstance() {
+    public static DrawnShapeStorage getInstance() {
         return InstanceHolder.instance;
     }
 
@@ -78,6 +78,6 @@ public class DrawnShapesMenu {
      * It is initialized when getInstance() is first called, ensuring lazy initialization and thread-safety.
      */
     private static final class InstanceHolder {
-        public static final DrawnShapesMenu instance = new DrawnShapesMenu();
+        public static final DrawnShapeStorage instance = new DrawnShapeStorage();
     }
 }

@@ -13,7 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.enums.ActionType;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
+import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.utils.MenuActionUtils;
@@ -205,7 +205,7 @@ public class MainWindowController {
      * @param shapeTemplate The shape template to remove.
      */
     private void removeShape(ShapeTemplate shapeTemplate) {
-        DrawnShapesMenu.getInstance().removeShape(shapeTemplate);
+        DrawnShapeStorage.getInstance().removeShape(shapeTemplate);
         clearCanvas();
         redrawShapes();
         InformationTextProvider.getInformationTextProperty().set(REMOVED_SHAPE_MESSAGE + shapeTemplate.getName());
@@ -218,7 +218,7 @@ public class MainWindowController {
      * @return An optional containing the found shape template, or an empty optional if no shape was found.
      */
     private Optional<ShapeTemplate> findFirstShapeAtClickPoint(MouseEvent event) {
-        return DrawnShapesMenu.getInstance().getSavedShapes().stream()
+        return DrawnShapeStorage.getInstance().getSavedShapes().stream()
                 .filter(shape -> shape.contains(event.getX(), event.getY()))
                 .findFirst();
     }
@@ -227,7 +227,7 @@ public class MainWindowController {
      * Redraws all the shapes saved in the DrawnShapesMenu on the canvas.
      */
     private void redrawShapes() {
-        DrawnShapesMenu.getInstance().getSavedShapes().forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
+        DrawnShapeStorage.getInstance().getSavedShapes().forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
     }
 
     /**

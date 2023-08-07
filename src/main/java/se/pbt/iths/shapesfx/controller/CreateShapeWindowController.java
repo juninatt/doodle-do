@@ -10,7 +10,7 @@ import se.pbt.iths.shapesfx.models.Circle;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.models.Square;
 import se.pbt.iths.shapesfx.models.Triangle;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
+import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 
@@ -64,7 +64,7 @@ public class CreateShapeWindowController {
             ShapeTemplate shape;
             Stage stage = (Stage) sizeSlider.getScene().getWindow();
             var action = stage.getTitle();
-            var isDuplicateName = DrawnShapesMenu.getInstance().getSavedShapes().stream()
+            var isDuplicateName = DrawnShapeStorage.getInstance().getSavedShapes().stream()
                     .anyMatch(storedShape -> storedShape.getName().equals(shapeNameField.getText()));
             if (!isDuplicateName) {
                 switch (action) {
@@ -73,7 +73,7 @@ public class CreateShapeWindowController {
                     case "Triangle" -> shape = new Triangle(shapeNameField.getText(), paint, size);
                     default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
                 }
-                DrawnShapesMenu.getInstance().addShape(shape);
+                DrawnShapeStorage.getInstance().addShape(shape);
                 SelectedShape.getInstance().setSelectedShape(shape);
                 stage.close();
                 InformationTextProvider.getInformationTextProperty().set(SHAPE_CREATION_SUCCESS);

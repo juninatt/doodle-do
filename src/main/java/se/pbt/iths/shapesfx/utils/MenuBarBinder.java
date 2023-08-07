@@ -4,11 +4,11 @@ import javafx.collections.ListChangeListener;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapesMenu;
+import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 
 /**
- * Binds the content of a JavaFX Menu to the list of drawn shapes managed by {@link DrawnShapesMenu}.
+ * Binds the content of a JavaFX Menu to the list of drawn shapes managed by {@link DrawnShapeStorage}.
  * When a new shape is added to or removed from the DrawnShapesMenu, the menu items are updated accordingly.
  */
 public class MenuBarBinder {
@@ -20,23 +20,23 @@ public class MenuBarBinder {
     }
 
     /**
-     * Initializes the binding of menu items to the shapes in {@link DrawnShapesMenu}.
+     * Initializes the binding of menu items to the shapes in {@link DrawnShapeStorage}.
      * If no shapes exist, displays an "Empty" menu item.
      * Otherwise, displays menu items for each drawn shape, and sets an action to select the shape when its menu item is clicked.
      */
     public void bindMenuItems() {
         updateMenuItems();
-        DrawnShapesMenu.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuItems());
+        DrawnShapeStorage.getInstance().getSavedShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuItems());
     }
 
     /**
-     * Updates the content of the menu based on the shapes stored in {@link DrawnShapesMenu}.
+     * Updates the content of the menu based on the shapes stored in {@link DrawnShapeStorage}.
      * If no shapes are present, an "Empty" menu item is displayed.
      * Otherwise, a menu item is created for each shape. Clicking on a shape menu item selects the shape and displays a message.
      */
     private void updateMenuItems() {
         menu.getItems().clear();
-        var drawnShapes = DrawnShapesMenu.getInstance().getSavedShapes();
+        var drawnShapes = DrawnShapeStorage.getInstance().getSavedShapes();
         if (drawnShapes.isEmpty()) {
             menu.getItems().add(new MenuItem("Empty"));
         } else {

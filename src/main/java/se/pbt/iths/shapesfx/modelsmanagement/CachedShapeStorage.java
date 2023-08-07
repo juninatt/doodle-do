@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.utils;
+package se.pbt.iths.shapesfx.modelsmanagement;
 
 import javafx.scene.shape.Shape;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
@@ -10,14 +10,14 @@ import java.util.List;
 /**
  * Class for holding a cache of shapes in SVG format.
  */
-public class StoredShapeCache {
+public class CachedShapeStorage {
 
     private List<ShapeTemplate> shapeCache;
 
     /**
      * Constructs a new ShapeCache.
      */
-    public StoredShapeCache() {
+    public CachedShapeStorage() {
         shapeCache = new ArrayList<>();
     }
 
