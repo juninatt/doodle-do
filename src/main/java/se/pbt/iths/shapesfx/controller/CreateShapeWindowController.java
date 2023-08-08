@@ -6,15 +6,12 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.models.Circle;
+import se.pbt.iths.shapesfx.factory.ShapeFactory;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
-import se.pbt.iths.shapesfx.models.Square;
-import se.pbt.iths.shapesfx.models.Triangle;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
 
-// TODO: Add builder/factory pattern
 // TODO: Improve exception handling
 /**
  * Controller class for the shape creation dialog window.
@@ -28,7 +25,7 @@ public class CreateShapeWindowController {
     private static final String SHAPE_NAME_TAKEN = "Sorry but that name is taken.";
 
     private double size;
-    private Paint paint;
+    private Paint color;
 
     @FXML
     private TextField shapeNameField;
@@ -45,10 +42,10 @@ public class CreateShapeWindowController {
     @FXML
     private void initialize() {
         size = sizeSlider.getValue();
-        paint = colorPicker.getValue();
+        color = colorPicker.getValue();
 
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> size = newValue.doubleValue());
-        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> paint = newValue);
+        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> color = newValue);
         InformationTextProvider.getInformationTextProperty().set(INITIALIZE_SHAPE_MESSAGE);
     }
 
@@ -64,19 +61,14 @@ public class CreateShapeWindowController {
         } else {
             String name = shapeNameField.getText();
             ShapeTemplate newShape;
-            var action = stage.getTitle();
-            var duplicateName = DrawnShapeStorage.getInstance().getByName(name);
-            if (duplicateName.isEmpty()) {
-                switch (action) {
-                    case "Circle" -> newShape = new Circle(name, paint, size);
-                    case "Square" -> newShape = new Square(name, paint, size);
-                    case "Triangle" -> newShape = new Triangle(name, paint, size);
-                    default -> throw new IllegalArgumentException("Error while creating shape. No shape was created");
-                }
+
+            var optionalDuplicateName = DrawnShapeStorage.getInstance().getByName(name);
+            if (optionalDuplicateName.isEmpty()) {
+                newShape = ShapeFactory.createShape(stage.getTitle(), name, color, size);
                 DrawnShapeStorage.getInstance().addShape(newShape);
                 SelectedShape.getInstance().setSelectedShape(newShape);
-                stage.close();
                 InformationTextProvider.getInformationTextProperty().set(SHAPE_CREATION_SUCCESS);
+                stage.close();
             }
             else InformationTextProvider.getInformationTextProperty().set(SHAPE_NAME_TAKEN);
         }
@@ -88,7 +80,7 @@ public class CreateShapeWindowController {
      * @return boolean indicating whether all fields are valid
      */
     private boolean allFieldsHaveValues() {
-        if (shapeNameField == null || paint == null)
+        if (shapeNameField == null || color == null)
             return false;
 
         return shapeNameField.getText().length() > 0

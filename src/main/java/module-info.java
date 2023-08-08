@@ -11,4 +11,6 @@ module se.pbt.iths.shapesfx {
     exports se.pbt.iths.shapesfx.view.canvas;
     exports se.pbt.iths.shapesfx.models;
     exports se.pbt.iths.shapesfx.exceptions;
+    exports se.pbt.iths.shapesfx.factory;
+    opens se.pbt.iths.shapesfx.factory to javafx.fxml;
 }

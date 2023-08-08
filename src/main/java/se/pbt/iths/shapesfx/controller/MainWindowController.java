@@ -16,7 +16,6 @@ import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
-import se.pbt.iths.shapesfx.utils.MenuActionUtils;
 import se.pbt.iths.shapesfx.utils.MenuBarBinder;
 import se.pbt.iths.shapesfx.view.canvas.CanvasView;
 import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
@@ -24,7 +23,12 @@ import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
+// TODO: Fix case when selected shape is drawn again. Create new shape with new name?
 // TODO: Improve exception handling
+// TODO: Replace Strings with constants
+// TODO: Move bindings and actions creation to separate class
+// TODO: Extract window creation and setup logic to separate class
+// TODO: Extract canvas and graphic context logic to separate class
 /**
  * The main controller class for the Shapes application.
  * Handles user interactions and shape creation/drawing.
@@ -33,9 +37,12 @@ public class MainWindowController {
 
     private static final String WELCOME_MESSAGE = "Welcome!";
     private static final String BEAUTIFUL_MESSAGE = "Beautiful!";
-    private static final String NO_SHAPE_SELECTED_MESSAGE = "Draw new shape or select old one to add it to the canvas.";
     private static final String RESET_INFORMATION_TEXT = "Use the menu to create and draw a shape";
     private static final String REMOVED_SHAPE_MESSAGE = "Removed shape with name: ";
+    private static final String NO_SHAPE_SELECTED_MESSAGE = "Did not get a shape there. Please try again!";
+    private static final String EDIT_SHAPE_MESSAGE = "Edit shape: ";
+
+    private static final String NO_SHAPE_SELECTED_REMOVE_MESSAGE = "No shape found at the clicked point. Choose 'remove' and try again to click on a shape to remove it!";
 
     private ActionType currentAction;
 
@@ -72,9 +79,11 @@ public class MainWindowController {
     private void setUpMenuBar() {
         setUpSelectMenu();
 
-        MenuActionUtils.bindActionToMenuItems(drawNewShapeMenu, this::openShapeCreationWindow);
+        drawNewShapeMenu.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
+            MenuItem sourceItem = (MenuItem) event.getSource();
+            openShapeCreationWindow(sourceItem.getText());
+        }));
 
-        // TODO: Separate binding and setting actions for menu items
         new MenuBarBinder(drawnShapesMenu).bindMenuItems();
     }
 
@@ -114,7 +123,7 @@ public class MainWindowController {
      */
     private void setUpInformationLabel() {
         informationText.textProperty().bind(InformationTextProvider.getInformationTextProperty());
-        InformationTextProvider.getInformationTextProperty().set(WELCOME_MESSAGE);
+        setInformationText(WELCOME_MESSAGE);
     }
 
     // Event handling methods
@@ -134,20 +143,26 @@ public class MainWindowController {
             case SAVE -> attemptSaveShape(event);
             case ROTATE -> attemptRotateShape(event);
             case REMOVE -> attemptRemoveShape(event);
+            case EMPTY -> setInformationText(RESET_INFORMATION_TEXT);
         }
     }
 
     // Shape handling methods
 
-    // TODO: Add proper exception handling
-    // TODO: Reduce number of method calls
     private void attemptEditShape(MouseEvent event) {
-        SelectedShape.getInstance().setSelectedShape(findFirstShapeAtClickPoint(event)
-                .orElse(null));
+        var shapeToEdit = findFirstShapeAtClickPoint(event);
 
-        openEditShapeWindow("Edit shape: " + SelectedShape.getInstance().getSelectedShape().getName());
-        clearCanvas();
-        redrawShapes();
+
+        if (shapeToEdit.isEmpty())
+            setInformationText(NO_SHAPE_SELECTED_MESSAGE);
+        else {
+            SelectedShape.getInstance().setSelectedShape(shapeToEdit.get());
+            openEditShapeWindow(EDIT_SHAPE_MESSAGE + shapeToEdit.get().getName());
+            clearCanvas();
+            redrawShapes();
+            SelectedShape.getInstance().reset();
+        }
+        currentAction = ActionType.EMPTY;
     }
 
     private void attemptSaveShape(MouseEvent event) {
@@ -168,13 +183,14 @@ public class MainWindowController {
         var shapeToDraw = SelectedShape.getInstance().getSelectedShape();
 
         if (shapeToDraw == null)
-            InformationTextProvider.getInformationTextProperty().set(NO_SHAPE_SELECTED_MESSAGE);
+            setInformationText(RESET_INFORMATION_TEXT);
         else {
             try {
                 performDraw(event.getX(), event.getY(), shapeToDraw);
-                handleSuccessfulDraw();
+                setInformationText(BEAUTIFUL_MESSAGE);
+                SelectedShape.getInstance().reset();
             } catch (RuntimeException runtimeException) {
-                resetInformationText();
+                setInformationText(RESET_INFORMATION_TEXT);
                 runtimeException.printStackTrace();
             }
         }
@@ -193,8 +209,9 @@ public class MainWindowController {
         if (optionalShape.isPresent()) {
             removeShape(optionalShape.get());
         } else {
-            InformationTextProvider.getInformationTextProperty().set("No shape found at the clicked point. Please click on a shape to remove it!");
+            setInformationText(NO_SHAPE_SELECTED_REMOVE_MESSAGE);
         }
+        currentAction = ActionType.EMPTY;
     }
 
     // Drawing and Canvas Manipulation Methods
@@ -208,7 +225,7 @@ public class MainWindowController {
         DrawnShapeStorage.getInstance().removeShape(shapeTemplate);
         clearCanvas();
         redrawShapes();
-        InformationTextProvider.getInformationTextProperty().set(REMOVED_SHAPE_MESSAGE + shapeTemplate.getName());
+        setInformationText(REMOVED_SHAPE_MESSAGE + shapeTemplate.getName());
     }
 
     /**
@@ -231,14 +248,6 @@ public class MainWindowController {
                 .forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
     }
 
-    /**
-     * Handles the necessary actions after a successful draw operation.
-     * Displays a success message and resets the currently selected shape.
-     */
-    private static void handleSuccessfulDraw() {
-        InformationTextProvider.getInformationTextProperty().set(BEAUTIFUL_MESSAGE);
-        SelectedShape.getInstance().reset();
-    }
 
     /**
      * Draws the specified shape template at the given coordinates on the canvas.
@@ -272,11 +281,9 @@ public class MainWindowController {
     /**
      * Resets the information text to its default value.
      */
-    private void resetInformationText() {
-        InformationTextProvider.getInformationTextProperty().set(RESET_INFORMATION_TEXT);
+    private void setInformationText(String message) {
+        InformationTextProvider.getInformationTextProperty().set(message);
     }
-
-    // TODO: Extract window creation and setup logic to separate class
 
     /**
      * Opens the shape creation window with the specified title. The shape creation window allows the user to set the size and color of the shape

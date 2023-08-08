@@ -25,8 +25,12 @@ public class MenuBarBinder {
      * Otherwise, displays menu items for each drawn shape, and sets an action to select the shape when its menu item is clicked.
      */
     public void bindMenuItems() {
-        updateMenuItems();
-        DrawnShapeStorage.getInstance().getDrawnShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuItems());
+        var drawnShapes = DrawnShapeStorage.getInstance().getDrawnShapes();
+
+        drawnShapes.addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuContent());
+
+
+        updateMenuContent();
     }
 
     /**
@@ -34,7 +38,7 @@ public class MenuBarBinder {
      * If no shapes are present, an "Empty" menu item is displayed.
      * Otherwise, a menu item is created for each shape. Clicking on a shape menu item selects the shape and displays a message.
      */
-    private void updateMenuItems() {
+    private void updateMenuContent() {
         menu.getItems().clear();
         var drawnShapes = DrawnShapeStorage.getInstance().getDrawnShapes();
         if (drawnShapes.isEmpty()) {
