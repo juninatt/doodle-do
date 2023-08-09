@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.utils;
+package se.pbt.iths.shapesfx.ui.config;
 
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Menu;

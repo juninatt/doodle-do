@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.utils;
+package se.pbt.iths.shapesfx.ui.resources;
 
 /**
  * This class holds the string messages used for user interaction throughout the application.

@@ -4,7 +4,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
-import se.pbt.iths.shapesfx.view.canvas.CanvasView;
+import se.pbt.iths.shapesfx.ui.views.canvas.CanvasView;
 
 import java.util.Optional;
 

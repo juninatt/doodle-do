@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.view.window;
+package se.pbt.iths.shapesfx.ui.config;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

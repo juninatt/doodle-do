@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
-import se.pbt.iths.shapesfx.utils.InformationTextProvider;
+import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 
 // TODO: Improve exception handling
 // TODO: Handle name duplication

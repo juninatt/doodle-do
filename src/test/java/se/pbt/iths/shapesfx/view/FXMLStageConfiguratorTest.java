@@ -4,7 +4,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import se.pbt.iths.shapesfx.view.window.FXMLStageConfigurator;
+import se.pbt.iths.shapesfx.ui.config.FXMLStageConfigurator;
 
 import java.io.IOException;
 

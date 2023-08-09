@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.utils;
+package se.pbt.iths.shapesfx.ui.utils;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;

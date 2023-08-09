@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.view.canvas;
+package se.pbt.iths.shapesfx.ui.views.canvas;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.BorderPane;
