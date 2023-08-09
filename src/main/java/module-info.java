@@ -13,4 +13,6 @@ module se.pbt.iths.shapesfx {
     exports se.pbt.iths.shapesfx.exceptions;
     exports se.pbt.iths.shapesfx.factory;
     opens se.pbt.iths.shapesfx.factory to javafx.fxml;
+    exports se.pbt.iths.shapesfx.controller.manager;
+    opens se.pbt.iths.shapesfx.controller.manager to javafx.fxml;
 }
