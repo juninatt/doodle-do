@@ -9,16 +9,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.enums.ActionType;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.utils.InformationTextProvider;
-import se.pbt.iths.shapesfx.utils.MenuBarBinder;
+import se.pbt.iths.shapesfx.utils.ShapeMenuBarBinder;
 import se.pbt.iths.shapesfx.view.canvas.CanvasView;
-import se.pbt.iths.shapesfx.view.window.FXMLWindowLoader;
+import se.pbt.iths.shapesfx.view.window.FXMLStageConfigurator;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -57,6 +56,10 @@ public class MainWindowController {
     @FXML
     private Label informationText;
 
+    public MainWindowController() {
+        this.currentAction = ActionType.EMPTY;
+    }
+
 
     /**
      * Initializes the ShapesController.
@@ -68,7 +71,6 @@ public class MainWindowController {
         VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
         setUpMenuBar();
         setUpInformationLabel();
-        currentAction = ActionType.EMPTY;
     }
 
     // Private Helper Methods to initialize components
@@ -81,10 +83,11 @@ public class MainWindowController {
 
         drawNewShapeMenu.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
             MenuItem sourceItem = (MenuItem) event.getSource();
-            openShapeCreationWindow(sourceItem.getText());
+            openNewWindow(sourceItem.getText(), "create-shape-vire.fxml");
         }));
 
-        new MenuBarBinder(drawnShapesMenu).bindMenuItems();
+        new ShapeMenuBarBinder(drawnShapesMenu, DrawnShapeStorage.getInstance()).bindMenuItems();
+
     }
 
     /**
@@ -157,7 +160,7 @@ public class MainWindowController {
             setInformationText(NO_SHAPE_SELECTED_MESSAGE);
         else {
             SelectedShape.getInstance().setSelectedShape(shapeToEdit.get());
-            openEditShapeWindow(EDIT_SHAPE_MESSAGE + shapeToEdit.get().getName());
+            openNewWindow(EDIT_SHAPE_MESSAGE + shapeToEdit.get().getName(), "edit-shape-view.fxml");
             clearCanvas();
             redrawShapes();
             SelectedShape.getInstance().reset();
@@ -292,15 +295,8 @@ public class MainWindowController {
      *
      * @param title The title of the shape creation window.
      */
-    private void openShapeCreationWindow(String title) {
-        FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "create-shape-view.fxml", Modality.APPLICATION_MODAL);
-        windowLoader.getWindowStage().showAndWait();
-        currentAction = ActionType.DRAW;
-    }
-
-    private void openEditShapeWindow(String title) {
-        FXMLWindowLoader windowLoader = new FXMLWindowLoader(new Stage(), title, "edit-shape-view.fxml", Modality.APPLICATION_MODAL);
-        windowLoader.getWindowStage().showAndWait();
-        currentAction = ActionType.EDIT;
+    private void openNewWindow(String title, String fxmlFile) {
+        FXMLStageConfigurator windowLoader = new FXMLStageConfigurator(new Stage());
+        windowLoader.getConfiguredStage(title, fxmlFile).showAndWait();
     }
 }
