@@ -11,12 +11,13 @@ import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
  * Binds the content of a JavaFX Menu to the list of drawn shapes managed by {@link DrawnShapeStorage}.
  * When a new shape is added to or removed from the DrawnShapesMenu, the menu items are updated accordingly.
  */
-public class MenuBarBinder {
-
+public class ShapeMenuBarBinder {
     private final Menu menu;
+    private final DrawnShapeStorage drawnShapes;
 
-    public MenuBarBinder(Menu menu) {
-        this.menu = menu;
+    public ShapeMenuBarBinder(Menu menu, DrawnShapeStorage drawnShapes) {
+        this.menu =  menu;
+        this.drawnShapes = drawnShapes;
     }
 
     /**
@@ -25,11 +26,7 @@ public class MenuBarBinder {
      * Otherwise, displays menu items for each drawn shape, and sets an action to select the shape when its menu item is clicked.
      */
     public void bindMenuItems() {
-        var drawnShapes = DrawnShapeStorage.getInstance().getDrawnShapes();
-
-        drawnShapes.addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuContent());
-
-
+        drawnShapes.getDrawnShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuContent());
         updateMenuContent();
     }
 
@@ -40,25 +37,26 @@ public class MenuBarBinder {
      */
     private void updateMenuContent() {
         menu.getItems().clear();
-        var drawnShapes = DrawnShapeStorage.getInstance().getDrawnShapes();
-        if (drawnShapes.isEmpty()) {
+        if (drawnShapes.getDrawnShapes().isEmpty()) {
             menu.getItems().add(new MenuItem("Empty"));
         } else {
-            for (ShapeTemplate shape : drawnShapes) {
+            for (ShapeTemplate shape : drawnShapes.getDrawnShapes()) {
                 menu.getItems().add(createShapeMenuItem(shape));
             }
         }
     }
 
+    /**
+     * Creates a new menu item for a given shape template.
+     * The menu item, when clicked, will set the shape as the selected shape.
+     *
+     * @param shape The shape template for which the menu item should be created.
+     * @return A MenuItem object corresponding to the given shape template.
+     */
     private MenuItem createShapeMenuItem(ShapeTemplate shape) {
         MenuItem menuItem = new MenuItem(shape.getName());
-        menuItem.setOnAction(e -> handleShapeMenuItemClick(shape));
+        menuItem.setOnAction(e -> SelectedShape.getInstance().setSelectedShape(shape));
         return menuItem;
-    }
-
-    private void handleShapeMenuItemClick(ShapeTemplate shape) {
-        SelectedShape.getInstance().setSelectedShape(shape);
-        InformationTextProvider.getInformationTextProperty().set("Shape '" + shape.getName() + "' selected. Click on the canvas to add it!");
     }
 }
 
