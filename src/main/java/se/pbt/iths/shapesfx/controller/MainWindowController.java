@@ -83,7 +83,8 @@ public class MainWindowController {
 
         drawNewShapeMenu.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
             MenuItem sourceItem = (MenuItem) event.getSource();
-            openNewWindow(sourceItem.getText(), "create-shape-vire.fxml");
+            openNewWindow(sourceItem.getText(), "create-shape-view.fxml");
+            currentAction = ActionType.DRAW;
         }));
 
         new ShapeMenuBarBinder(drawnShapesMenu, DrawnShapeStorage.getInstance()).bindMenuItems();
