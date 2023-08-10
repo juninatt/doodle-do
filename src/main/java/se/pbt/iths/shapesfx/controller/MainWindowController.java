@@ -1,11 +1,9 @@
 package se.pbt.iths.shapesfx.controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -14,13 +12,14 @@ import se.pbt.iths.shapesfx.enums.ActionType;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
-import se.pbt.iths.shapesfx.utils.AppMessages;
-import se.pbt.iths.shapesfx.utils.InformationTextProvider;
-import se.pbt.iths.shapesfx.utils.ShapeMenuBarBinder;
-import se.pbt.iths.shapesfx.view.canvas.CanvasView;
-import se.pbt.iths.shapesfx.view.window.FXMLStageConfigurator;
-
-import java.util.stream.IntStream;
+import se.pbt.iths.shapesfx.ui.config.DrawShapeMenuConfigurator;
+import se.pbt.iths.shapesfx.ui.config.AvailableShapesMenuConfigurator;
+import se.pbt.iths.shapesfx.ui.config.FXMLStageConfigurator;
+import se.pbt.iths.shapesfx.ui.config.SelectMenuConfigurator;
+import se.pbt.iths.shapesfx.ui.resources.AppMessages;
+import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
+import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
+import se.pbt.iths.shapesfx.ui.views.canvas.CanvasView;
 
 // TODO: Fix case when selected shape is drawn again. Create new shape with new name?
 // TODO: Improve exception handling
@@ -30,8 +29,8 @@ import java.util.stream.IntStream;
  * Handles user interactions and shape creation/drawing.
  */
 public class MainWindowController {
-    private ActionType currentAction;
-    CanvasManager canvasManager;
+
+    private CanvasManager canvasManager;
 
     @FXML
     private CanvasView canvasView;
@@ -54,59 +53,31 @@ public class MainWindowController {
      * Binds the menu items and information text property and sets action events for items.
      */
     public void initialize() {
-        VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
+        setUpCanvas();
         setUpMenuBar();
         setUpInformationLabel();
-
-        canvasManager = new CanvasManager(canvasView);
     }
 
     // Private Helper Methods to initialize components
 
     /**
+     * Initializes the canvas settings for the application.
+     */
+    private void setUpCanvas() {
+        VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
+        canvasManager = new CanvasManager(canvasView);
+    }
+
+    /**
      * Initializes the menu bar by setting up item actions and binding the menu to saved shapes.
      */
     private void setUpMenuBar() {
-        setUpSelectMenu();
-
-        drawNewShapeMenu.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
-            MenuItem sourceItem = (MenuItem) event.getSource();
-            openNewWindow(sourceItem.getText(), "create-shape-view.fxml");
-            currentAction = ActionType.DRAW;
-        }));
-
-        new ShapeMenuBarBinder(drawnShapesMenu, DrawnShapeStorage.getInstance()).bindMenuItems();
-
-    }
-
-    /**
-     * Initializes the select menu by associating each menu item with its corresponding action.
-     * Iterates over each menu item in the select menu and sets the action event handler.
-     */
-    private void setUpSelectMenu() {
-        IntStream.range(0, selectMenu.getItems().size())
-                .forEach(index -> {
-                    MenuItem menuItem = selectMenu.getItems().get(index);
-                    menuItem.setOnAction(this::setAction);
-                });
-    }
-
-
-    /**
-     * Updates the current action based on the selected menu item's text.
-     * The text is converted to its corresponding {@link ActionType} enumeration.
-     *
-     * @param event The action event from the clicked menu item.
-     */
-    private void setAction(ActionEvent event) {
-        var menuItem = (MenuItem) event.getSource();
-        var text = menuItem.getText().toUpperCase();
-        try {
-            ActionTypeProvider.setType(ActionType.valueOf(text));
-        } catch (IllegalArgumentException illegalArgumentException) {
-            illegalArgumentException.printStackTrace();
-            ActionTypeProvider.setType(ActionType.EMPTY);
-        }
+        new SelectMenuConfigurator(selectMenu)
+                .configure();
+        new DrawShapeMenuConfigurator(drawNewShapeMenu, new FXMLStageConfigurator(new Stage()))
+                .configure();
+        new AvailableShapesMenuConfigurator(drawnShapesMenu, DrawnShapeStorage.getInstance())
+                .configure();
     }
 
 
@@ -140,21 +111,19 @@ public class MainWindowController {
     // Shape handling methods
 
     /**
-     * Handles the edit action for a shape on the canvas. If a shape is found at the clicked
-     * point, it is set as the selected shape and the edit window is opened. The canvas is
-     * then refreshed to reflect any changes. If no shape is found at the clicked point, an
-     * informational message is displayed.
+     * Edits the shape at the clicked canvas point. If a shape is found, it's set as the selected shape, the edit window is shown,
+     * and the canvas is refreshed.
      *
-     * @param event The MouseEvent representing the canvas click event.
+     * @param event The canvas click MouseEvent.
      */
     private void attemptEditShape(MouseEvent event) {
         var shapeToEdit = canvasManager.findFirstShapeAtClickPoint(event);
-
         if (shapeToEdit.isEmpty())
             setInformationText(AppMessages.NO_SHAPE_SELECTED);
         else {
             SelectedShape.getInstance().setSelectedShape(shapeToEdit.get());
-            openNewWindow(AppMessages.EDIT_SHAPE_NAMED + shapeToEdit.get().getName(), "edit-shape-view.fxml");
+            var windowLoader = new FXMLStageConfigurator(new Stage());
+            windowLoader.getConfiguredStage(shapeToEdit.get().getName(), "edit-shape-view.fxml").showAndWait();
             canvasManager.clearCanvas();
             canvasManager.redrawShapes();
             SelectedShape.getInstance().reset();
@@ -172,7 +141,6 @@ public class MainWindowController {
 
     /**
      * Attempts to draw the selected shape on the canvas at the mouse event position.
-     * Handles successful drawing or provides feedback if no shape is selected.
      *
      * @param event The MouseEvent representing the canvas click event.
      */
@@ -196,7 +164,6 @@ public class MainWindowController {
 
     /**
      * Attempts to remove the shape at the mouse event position.
-     * Removes the shape if found, or provides feedback if not found.
      *
      * @param event The MouseEvent representing the canvas click event.
      */
@@ -234,16 +201,5 @@ public class MainWindowController {
      */
     private void setInformationText(String message) {
         InformationTextProvider.setMessage(message);
-    }
-
-    /**
-     * Opens window with the specified title and fxml-file.
-     *
-     * @param title The title of the shape creation window.
-     * @param fxmlFile The fxml file used to configure and load the window
-     */
-    private void openNewWindow(String title, String fxmlFile) {
-        FXMLStageConfigurator windowLoader = new FXMLStageConfigurator(new Stage());
-        windowLoader.getConfiguredStage(title, fxmlFile).showAndWait();
     }
 }
