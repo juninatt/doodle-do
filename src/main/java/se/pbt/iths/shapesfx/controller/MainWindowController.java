@@ -25,7 +25,6 @@ import java.util.stream.IntStream;
 // TODO: Fix case when selected shape is drawn again. Create new shape with new name?
 // TODO: Improve exception handling
 // TODO: Move bindings and actions creation to separate class
-// TODO: Extract window creation and setup logic to separate class
 /**
  * The main controller class for the Shapes application.
  * Handles user interactions and shape creation/drawing.
@@ -46,7 +45,7 @@ public class MainWindowController {
     private Label informationText;
 
     public MainWindowController() {
-        this.currentAction = ActionType.EMPTY;
+        ActionTypeProvider.setType(ActionType.EMPTY);
     }
 
 
@@ -103,10 +102,10 @@ public class MainWindowController {
         var menuItem = (MenuItem) event.getSource();
         var text = menuItem.getText().toUpperCase();
         try {
-            currentAction = ActionType.valueOf(text);
+            ActionTypeProvider.setType(ActionType.valueOf(text));
         } catch (IllegalArgumentException illegalArgumentException) {
             illegalArgumentException.printStackTrace();
-            currentAction = ActionType.EMPTY;
+            ActionTypeProvider.setType(ActionType.EMPTY);
         }
     }
 
@@ -115,7 +114,7 @@ public class MainWindowController {
      * Set a welcome message to the label and bind it to {@link InformationTextProvider}.
      */
     private void setUpInformationLabel() {
-        informationText.textProperty().bind(InformationTextProvider.getInformationTextProperty());
+        informationText.textProperty().bind(InformationTextProvider.getMessage());
         setInformationText(AppMessages.WELCOME);
     }
 
@@ -128,7 +127,7 @@ public class MainWindowController {
      */
     @FXML
     private void handleCanvasClick(MouseEvent event) {
-        switch (currentAction) {
+        switch (ActionTypeProvider.getType()) {
             case DRAW -> attemptDrawShape(event);
             case EDIT -> attemptEditShape(event);
             case SAVE -> attemptSaveShape(event);
@@ -160,7 +159,7 @@ public class MainWindowController {
             canvasManager.redrawShapes();
             SelectedShape.getInstance().reset();
         }
-        currentAction = ActionType.EMPTY;
+        ActionTypeProvider.setType(ActionType.EMPTY);
     }
 
     private void attemptSaveShape(MouseEvent event) {
@@ -209,7 +208,7 @@ public class MainWindowController {
         } else {
             setInformationText(AppMessages.NO_SHAPE_SELECTED);
         }
-        currentAction = ActionType.EMPTY;
+    ActionTypeProvider.setType(ActionType.EMPTY);
     }
 
     // Drawing and Canvas Manipulation Methods
@@ -229,10 +228,12 @@ public class MainWindowController {
     // Utility and Miscellaneous Methods
 
     /**
-     * Resets the information text to its default value.
+     * Sets the text of the information text label.
+     *
+     * @param message The text message to set as information text
      */
     private void setInformationText(String message) {
-        InformationTextProvider.getInformationTextProperty().set(message);
+        InformationTextProvider.setMessage(message);
     }
 
     /**

@@ -6,7 +6,11 @@ import javafx.beans.property.StringProperty;
 public class InformationTextProvider {
     private static final StringProperty informationTextProperty = new SimpleStringProperty("");
 
-    public static StringProperty getInformationTextProperty() {
+    public static StringProperty getMessage() {
         return informationTextProperty;
+    }
+
+    public static void setMessage(String text) {
+        informationTextProperty.set(text);
     }
 }

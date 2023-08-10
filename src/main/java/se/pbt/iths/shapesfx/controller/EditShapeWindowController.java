@@ -118,6 +118,6 @@ public class EditShapeWindowController {
      * @param message the message to display
      */
     private void setInformationText(String message) {
-        InformationTextProvider.getInformationTextProperty().set(message);
+        InformationTextProvider.getMessage().set(message);
     }
 }

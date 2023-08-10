@@ -46,7 +46,7 @@ public class CreateShapeWindowController {
 
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> size = newValue.doubleValue());
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> color = newValue);
-        InformationTextProvider.getInformationTextProperty().set(INITIALIZE_SHAPE_MESSAGE);
+        InformationTextProvider.getMessage().set(INITIALIZE_SHAPE_MESSAGE);
     }
 
     /**
@@ -57,7 +57,7 @@ public class CreateShapeWindowController {
     private void confirmShapeButtonClicked() {
         Stage stage = (Stage) sizeSlider.getScene().getWindow();
         if (!allFieldsHaveValues()) {
-            InformationTextProvider.getInformationTextProperty().set(SHAPE_PROPERTIES_REQUIRED);
+            InformationTextProvider.getMessage().set(SHAPE_PROPERTIES_REQUIRED);
         } else {
             String name = shapeNameField.getText();
             ShapeTemplate newShape;
@@ -67,10 +67,10 @@ public class CreateShapeWindowController {
                 newShape = ShapeFactory.createShape(stage.getTitle(), name, color, size);
                 DrawnShapeStorage.getInstance().addShape(newShape);
                 SelectedShape.getInstance().setSelectedShape(newShape);
-                InformationTextProvider.getInformationTextProperty().set(SHAPE_CREATION_SUCCESS);
+                InformationTextProvider.getMessage().set(SHAPE_CREATION_SUCCESS);
                 stage.close();
             }
-            else InformationTextProvider.getInformationTextProperty().set(SHAPE_NAME_TAKEN);
+            else InformationTextProvider.getMessage().set(SHAPE_NAME_TAKEN);
         }
     }
 
