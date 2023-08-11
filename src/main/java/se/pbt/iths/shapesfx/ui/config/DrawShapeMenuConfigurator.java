@@ -2,6 +2,7 @@ package se.pbt.iths.shapesfx.ui.config;
 
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.enums.ActionType;
 import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
 
@@ -12,17 +13,14 @@ import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
 public class DrawShapeMenuConfigurator {
 
     private final Menu menu;
-    private final FXMLStageConfigurator configurator;
 
     /**
      * Constructs a new DrawShapeMenuConfigurator using the given menu and an instance of {@link FXMLStageConfigurator}.
      *
      * @param menu         the menu to be configured.
-     * @param configurator the FXML stage configurator to set up shape creation views.
      */
-    public DrawShapeMenuConfigurator(Menu menu, FXMLStageConfigurator configurator) {
+    public DrawShapeMenuConfigurator(Menu menu) {
         this.menu = menu;
-        this.configurator = configurator;
     }
 
     /**
@@ -33,6 +31,7 @@ public class DrawShapeMenuConfigurator {
         menu.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
             ActionTypeProvider.setType(ActionType.DRAW);
             MenuItem sourceItem = (MenuItem) event.getSource();
+            var configurator = new FXMLStageConfigurator(new Stage());
             configurator.getConfiguredStage(sourceItem.getText(), "create-shape-view.fxml")
                     .showAndWait();
         }));

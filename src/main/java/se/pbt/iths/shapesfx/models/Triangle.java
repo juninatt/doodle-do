@@ -42,35 +42,35 @@ public class Triangle extends ShapeTemplate {
         return String.format("M %f %f L %f %f L %f %f Z", cx, cy - halfHeight, x1, y1, x2, y1);
     }
 
-    /**
-     * Draws an equilateral triangle on the provided GraphicsContext, using the specified x and y as the centroid of the triangle.
-     *
-     * @param gc The GraphicsContext on which the triangle is drawn.
-     * @param x  The x-coordinate of the centroid of the triangle.
-     * @param y  The y-coordinate of the centroid of the triangle.
-     */
-    @Override
-    public void draw(GraphicsContext gc, double x, double y) {
-        // Triangle dimensions
-        double halfHeight = (Math.sqrt(3) / 2) * size;
-        double halfSide = size / 2.0;
+        /**
+         * Draws an equilateral triangle on the provided GraphicsContext, using the specified x and y as the centroid of the triangle.
+         *
+         * @param gc The GraphicsContext on which the triangle is drawn.
+         * @param x  The x-coordinate of the centroid of the triangle.
+         * @param y  The y-coordinate of the centroid of the triangle.
+         */
+        @Override
+        public void draw(GraphicsContext gc, double x, double y) {
+            // Triangle dimensions
+            double height = (Math.sqrt(3) / 2) * size;
 
-        // Calculate the triangle's vertices based on the input (x,y) coordinates.
-        double[] xPoints = {
-                x - halfSide,
-                x + halfSide,
-                x
-        };
+            // Calculate the triangle's vertices based on the input (x,y) coordinates.
+            double[] xPoints = {
+                    x - size/2,         // Bottom left
+                    x + size/2,         // Bottom right
+                    x                   // Top
+            };
 
-        double[] yPoints = {
-                y + halfHeight,
-                y + halfHeight,
-                y - halfHeight
-        };
+            double[] yPoints = {
+                    y + height/3,       // Bottom left
+                    y + height/3,       // Bottom right
+                    y - 2*height/3      // Top
+            };
 
-        gc.setFill(getPaint());
-        gc.fillPolygon(xPoints, yPoints, 3);
-    }
+            gc.setFill(getPaint());
+            gc.fillPolygon(xPoints, yPoints, 3);
+        }
+
 
     /**
      * Determines if the specified point (x, y) lies within the boundaries of the triangle.

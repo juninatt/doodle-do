@@ -76,7 +76,7 @@ public class MainWindowController {
     private void setUpMenuBar() {
         new SelectMenuConfigurator(selectMenu)
                 .configure();
-        new DrawShapeMenuConfigurator(drawNewShapeMenu, new FXMLStageConfigurator(new Stage()))
+        new DrawShapeMenuConfigurator(drawNewShapeMenu)
                 .configure();
         new AvailableShapesMenuConfigurator(drawnShapesMenu, DrawnShapeStorage.getInstance())
                 .configure();
