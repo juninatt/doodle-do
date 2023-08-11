@@ -1,11 +1,14 @@
 package se.pbt.iths.shapesfx.models;
 
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.Shape;
 import se.pbt.iths.shapesfx.interfaces.Drawable;
 import se.pbt.iths.shapesfx.interfaces.Updatable;
 
+/**
+ * Abstract class representing a template for shapes with extended properties.
+ * Each shape derived from this template can be drawn and updated.
+ */
 public abstract class ShapeTemplate extends Shape implements Drawable, Updatable {
     protected String name;
     protected Paint paint;
@@ -16,21 +19,24 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
     protected double cx; // Center x
     protected double cy; // Center y
 
-    protected SVGPath svgPathData;
-
+    /**
+     * Default constructor.
+     */
     public ShapeTemplate() {
     }
 
-    public ShapeTemplate(SVGPath svgPathData) {
-        this.svgPathData = svgPathData;
-    }
-
+    /**
+    * Constructor with essential shape properties.
+    */
     public ShapeTemplate(String name, Paint paint, double size) {
         this.name = name;
         this.paint = paint;
         this.size = size;
     }
 
+    /**
+     * Comprehensive constructor with extended properties.
+     */
     public ShapeTemplate(String name, Paint paint, Paint strokeColor, double rotation, boolean selected, double cx, double cy) {
         this.name = name;
         this.paint = paint;
@@ -105,14 +111,20 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
         this.cy = cy;
     }
 
-    public SVGPath getSvgPathData() {
-        return svgPathData;
-    }
+    /**
+     * Converts the shape properties to an SVG path representation.
+     *
+     * @return SVG path as string.
+     */
+    public abstract String toSvgPath();
 
-    public void setSvgPathData(SVGPath svgPathData) {
-        this.svgPathData = svgPathData;
-    }
-
+    /**
+     * Updates essential shape properties.
+     *
+     * @param name  Updated name of the shape.
+     * @param paint Updated fill color of the shape.
+     * @param size  Updated size or radius of the shape.
+     */
     @Override
     public void update(String name, Paint paint, double size) {
         this.name = name;

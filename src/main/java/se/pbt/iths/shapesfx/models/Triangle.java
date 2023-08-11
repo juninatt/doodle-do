@@ -3,34 +3,86 @@ package se.pbt.iths.shapesfx.models;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 
+/**
+ * Represents an equilateral triangle shape. This class extends the {@link ShapeTemplate}
+ * and provides specific implementations for drawing, SVG path conversion, and point containment
+ * related to equilateral triangles.
+ *
+ * @see ShapeTemplate
+ */
 public class Triangle extends ShapeTemplate {
 
+    /**
+     * Constructs an equilateral triangle with the given name, paint, and size.
+     *
+     * @param name  The name of the triangle.
+     * @param paint The paint used to fill the triangle when drawn.
+     * @param size  The side length of the equilateral triangle.
+     */
     public Triangle(String name, Paint paint, double size) {
         super(name, paint, size);
     }
 
+    private double getHeight() {
+        return (Math.sqrt(3) / 2) * size;
+    }
+
+    /**
+     * Provides an SVG path representation of the triangle.
+     *
+     * @return A string representing the triangle as an SVG path.
+     */
+    @Override
+    public String toSvgPath() {
+        double halfHeight = getHeight() / 2.0;
+        double halfSide = size / 2.0;
+        double x1 = cx - halfSide;
+        double y1 = cy + halfHeight;
+        double x2 = cx + halfSide;
+        return String.format("M %f %f L %f %f L %f %f Z", cx, cy - halfHeight, x1, y1, x2, y1);
+    }
+
+    /**
+     * Draws an equilateral triangle on the provided GraphicsContext, using the specified x and y as the centroid of the triangle.
+     *
+     * @param gc The GraphicsContext on which the triangle is drawn.
+     * @param x  The x-coordinate of the centroid of the triangle.
+     * @param y  The y-coordinate of the centroid of the triangle.
+     */
     @Override
     public void draw(GraphicsContext gc, double x, double y) {
-        // Calculate half of the triangle's height.
-        double halfHeight = (Math.sqrt(3) / 2) * size / 2.0;
-
-        // Calculate half of the triangle's side length.
+        // Triangle dimensions
+        double halfHeight = (Math.sqrt(3) / 2) * size;
         double halfSide = size / 2.0;
 
-        // Define the x-coordinates of the triangle's vertices.
-        double[] xPoints = {x - halfSide, x + halfSide, x};
+        // Calculate the triangle's vertices based on the input (x,y) coordinates.
+        double[] xPoints = {
+                x - halfSide,
+                x + halfSide,
+                x
+        };
 
-        // Define the y-coordinates of the triangle's vertices.
-        double[] yPoints = {y + halfHeight, y + halfHeight, y - halfHeight};
+        double[] yPoints = {
+                y + halfHeight,
+                y + halfHeight,
+                y - halfHeight
+        };
 
         gc.setFill(getPaint());
         gc.fillPolygon(xPoints, yPoints, 3);
     }
 
+    /**
+     * Determines if the specified point (x, y) lies within the boundaries of the triangle.
+     *
+     * @param x The x-coordinate of the point.
+     * @param y The y-coordinate of the point.
+     * @return {@code true} if the point is within the triangle; {@code false} otherwise.
+     */
     @Override
     public boolean contains(double x, double y) {
         // Calculate the triangle's height.
-        double height = (Math.sqrt(3) / 2) * size;
+        double height = getHeight();
 
         // Translate the point to the coordinate system where the triangle is centered at the origin.
         x -= getCx();
