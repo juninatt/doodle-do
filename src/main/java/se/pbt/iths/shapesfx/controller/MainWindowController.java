@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
 import se.pbt.iths.shapesfx.enums.ActionType;
 import se.pbt.iths.shapesfx.exceptions.ShapeSaveException;
+import se.pbt.iths.shapesfx.interfaces.Rotatable;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
@@ -23,7 +24,10 @@ import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.ui.views.canvas.CanvasView;
+import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
+// TODO: Add choice foe user when rotating angle
+// TODO: Created shape is added to drawn shapes menu before drawn
 // TODO: Fix case when selected shape is drawn again. Create new shape with new name?
 // TODO: Improve exception handling with alert message
 /**
@@ -174,10 +178,29 @@ public class MainWindowController {
         alert.showAndWait();
     }
 
-
+    /**
+     * Attempts to rotate the shape at the mouse event position by a given angle.
+     * If the shape implements the {@link Rotatable} interface, it will be rotated.
+     * If no shape is found at the click point, a message is displayed to inform the user that no shape was selected.
+     *
+     * @param event The MouseEvent representing the canvas click event.
+     */
     private void attemptRotateShape(MouseEvent event) {
-        // TODO: Add logic to save shapes on the canvas
+        var rotator = new ShapeRotator();
+        double angle = 45;
+        var shape = canvasManager.findFirstShapeAtClickPoint(event);
+
+        if (shape.isEmpty())
+            setInformationText(AppMessages.NO_SHAPE_SELECTED_MSG);
+        else {
+            if (shape.get() instanceof Rotatable rotatableShape) {
+                rotatableShape.rotate(rotator, angle);
+                canvasManager.clearCanvas();
+                canvasManager.redrawShapes();
+            }
+        }
     }
+
 
     /**
      * Attempts to draw the currently selected shape onto the canvas based on the user's click position.

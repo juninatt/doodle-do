@@ -2,6 +2,8 @@ package se.pbt.iths.shapesfx.models;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
+import se.pbt.iths.shapesfx.interfaces.Rotatable;
+import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
 /**
  * Represents an equilateral triangle shape. This class extends the {@link ShapeTemplate}
@@ -10,7 +12,8 @@ import javafx.scene.paint.Paint;
  *
  * @see ShapeTemplate
  */
-public class Triangle extends ShapeTemplate {
+public class Triangle extends ShapeTemplate implements Rotatable {
+    private static final int NUM_VERTICES = 3;
 
     /**
      * Constructs an equilateral triangle with the given name, paint, and size.
@@ -23,9 +26,6 @@ public class Triangle extends ShapeTemplate {
         super(name, paint, size);
     }
 
-    private double getHeight() {
-        return (Math.sqrt(3) / 2) * size;
-    }
 
     /**
      * Provides an SVG path representation of the triangle.
@@ -42,35 +42,49 @@ public class Triangle extends ShapeTemplate {
         return String.format("M %f %f L %f %f L %f %f Z", cx, cy - halfHeight, x1, y1, x2, y1);
     }
 
-        /**
-         * Draws an equilateral triangle on the provided GraphicsContext, using the specified x and y as the centroid of the triangle.
-         *
-         * @param gc The GraphicsContext on which the triangle is drawn.
-         * @param x  The x-coordinate of the centroid of the triangle.
-         * @param y  The y-coordinate of the centroid of the triangle.
-         */
-        @Override
-        public void draw(GraphicsContext gc, double x, double y) {
-            // Triangle dimensions
-            double height = (Math.sqrt(3) / 2) * size;
+    /**
+     * Draws an equilateral triangle on the provided GraphicsContext, using the specified x and y as the centroid of the triangle.
+     *
+     * @param gc The GraphicsContext on which the triangle is drawn.
+     * @param x  The x-coordinate of the centroid of the triangle.
+     * @param y  The y-coordinate of the centroid of the triangle.
+     */
+    @Override
+    public void draw(GraphicsContext gc, double x, double y) {
+        cx = x;
+        cy = y;
+        double height = (Math.sqrt(3) / 2) * size;
 
-            // Calculate the triangle's vertices based on the input (x,y) coordinates.
-            double[] xPoints = {
-                    x - size/2,         // Bottom left
-                    x + size/2,         // Bottom right
-                    x                   // Top
-            };
+        if (vertices == null)
+            setVertices(x, y, height);
 
-            double[] yPoints = {
-                    y + height/3,       // Bottom left
-                    y + height/3,       // Bottom right
-                    y - 2*height/3      // Top
-            };
+        gc.setFill(getPaint());
+        gc.fillPolygon(vertices[ROW_X], vertices[ROW_Y], NUM_VERTICES);
+    }
 
-            gc.setFill(getPaint());
-            gc.fillPolygon(xPoints, yPoints, 3);
-        }
+    /**
+     * Sets the vertices for a shape based on the given x, y coordinates and height.
+     * The method constructs the vertices for a triangle with the specified parameters.
+     *
+     * @param x       The x-coordinate of the center of the shape.
+     * @param y       The y-coordinate of the center of the shape.
+     * @param height  The height of the shape.
+     */
+    private void setVertices(double x, double y, double height) {
+        vertices = new double[2][NUM_VERTICES];
 
+        vertices[ROW_X] = new double[]{
+                x - size / 2,         // Bottom left
+                x + size / 2,         // Bottom right
+                x                     // Top
+        };
+
+        vertices[ROW_Y] = new double[]{
+                y + height / 3,       // Bottom left
+                y + height / 3,       // Bottom right
+                y - 2 * height / 3    // Top
+        };
+    }
 
     /**
      * Determines if the specified point (x, y) lies within the boundaries of the triangle.
@@ -81,7 +95,6 @@ public class Triangle extends ShapeTemplate {
      */
     @Override
     public boolean contains(double x, double y) {
-        // Calculate the triangle's height.
         double height = getHeight();
 
         // Translate the point to the coordinate system where the triangle is centered at the origin.
@@ -90,5 +103,14 @@ public class Triangle extends ShapeTemplate {
 
         // Check if the point lies within the bounds of the triangle.
         return (x >= -size / 2) && (x <= size / 2) && (y >= -height / 2) && (y <= height / 2);
+    }
+
+    @Override
+    public void rotate(ShapeRotator rotator, double angle) {
+        vertices = rotator.rotatePoints(vertices, cx, cy, angle);
+    }
+
+    private double getHeight() {
+        return (Math.sqrt(3) / 2) * size;
     }
 }

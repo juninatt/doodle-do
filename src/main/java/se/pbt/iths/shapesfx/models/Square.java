@@ -2,6 +2,8 @@ package se.pbt.iths.shapesfx.models;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
+import se.pbt.iths.shapesfx.interfaces.Rotatable;
+import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
 /**
  * Represents a square shape. This class extends the {@link ShapeTemplate}
@@ -10,7 +12,9 @@ import javafx.scene.paint.Paint;
  *
  * @see ShapeTemplate
  */
-public class Square extends ShapeTemplate {
+public class Square extends ShapeTemplate implements Rotatable {
+
+    private static final int NUM_VERTICES = 4;
 
     /**
      * Constructor to initialize the square with the essential properties.
@@ -43,11 +47,34 @@ public class Square extends ShapeTemplate {
      */
     @Override
     public void draw(GraphicsContext gc, double x, double y) {
-        cx = x - size / 2;
-        cy = y - size / 2;
+        cx = x;
+        cy = y;
+
+        if (vertices == null)
+            setVertices(x, y);
+
         gc.setFill(getPaint());
-        gc.fillRect(cx, cy, size, size);
+        gc.fillPolygon(vertices[ROW_X], vertices[ROW_Y], NUM_VERTICES);
     }
+
+    private void setVertices(double x, double y) {
+        vertices = new double[2][NUM_VERTICES];
+
+        vertices[ROW_X] = new double[]{
+                x - size / 2,  // Top-left
+                x + size / 2,  // Top-right
+                x + size / 2,  // Bottom-right
+                x - size / 2   // Bottom-left
+        };
+
+        vertices[ROW_Y] = new double[]{
+                y - size / 2,  // Top-left
+                y - size / 2,  // Top-right
+                y + size / 2,  // Bottom-right
+                y + size / 2   // Bottom-left
+        };
+    }
+
 
     /**
      * Determines if a point (x,y) is within the square's boundaries.
@@ -61,6 +88,11 @@ public class Square extends ShapeTemplate {
         var leftX = cx - size / 2;
         var topY = cy - size / 2;
         return x >= leftX && x <= leftX + size && y >= topY && y <= topY + size;
+    }
+
+    @Override
+    public void rotate(ShapeRotator rotator, double angle) {
+        vertices = rotator.rotatePoints(vertices, cx, cy, angle);
     }
 }
 
