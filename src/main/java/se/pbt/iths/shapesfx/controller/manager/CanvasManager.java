@@ -27,13 +27,13 @@ public class CanvasManager {
                 .forEach(shapeTemplate -> performDraw(shapeTemplate.getCx(), shapeTemplate.getCy(), shapeTemplate));
     }
 
-    public void performDraw(double x, double y, ShapeTemplate shape) {
+    public void performDraw(double cx, double cy, ShapeTemplate shape) {
         try {
             var gc = canvas.getCanvasNode().getGraphicsContext2D();
             gc.setFill(shape.getFill());
-            shape.draw(gc, x, y);
-            shape.setCx(x);
-            shape.setCy(y);
+            shape.draw(gc, cx, cy);
+            shape.setCx(cx);
+            shape.setCy(cy);
         } catch (RuntimeException exception) {
             exception.printStackTrace();
         }

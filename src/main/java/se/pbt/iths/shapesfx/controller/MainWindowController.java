@@ -12,6 +12,7 @@ import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
 import se.pbt.iths.shapesfx.enums.ActionType;
 import se.pbt.iths.shapesfx.exceptions.ShapeSaveException;
 import se.pbt.iths.shapesfx.interfaces.Rotatable;
+import se.pbt.iths.shapesfx.interfaces.CanvasMouseEventHandler;
 import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
@@ -26,10 +27,10 @@ import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.ui.views.canvas.CanvasView;
 import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
-// TODO: Add choice foe user when rotating angle
-// TODO: Created shape is added to drawn shapes menu before drawn
-// TODO: Fix case when selected shape is drawn again. Create new shape with new name?
-// TODO: Improve exception handling with alert message
+import java.util.HashMap;
+import java.util.Map;
+
+
 /**
  * The main controller class for the Shapes application.
  * Handles user interactions and shape creation/drawing.
@@ -37,6 +38,8 @@ import se.pbt.iths.shapesfx.utils.ShapeRotator;
 public class MainWindowController {
 
     private CanvasManager canvasManager;
+
+    private final Map<ActionType, CanvasMouseEventHandler> strategies;
 
     @FXML
     private CanvasView canvasView;
@@ -50,6 +53,12 @@ public class MainWindowController {
     private Label informationText;
 
     public MainWindowController() {
+        strategies = new HashMap<>();
+        strategies.put(ActionType.DRAW, this::attemptDrawShape);
+        strategies.put(ActionType.ROTATE, this::attemptRotateShape);
+        strategies.put(ActionType.EDIT, this::attemptEditShape);
+        strategies.put(ActionType.REMOVE, this::attemptRemoveShape);
+        strategies.put(ActionType.SAVE, this::attemptSaveShape);
         ActionTypeProvider.setType(ActionType.EMPTY);
     }
 
@@ -59,17 +68,15 @@ public class MainWindowController {
      * Binds the menu items and information text property and sets action events for items.
      */
     public void initialize() {
-        setUpCanvas();
-        setUpMenuBar();
-        setUpInformationLabel();
+        InitializeCanvas();
+        InitializeMenuBar();
+        InitializeLabel();
     }
-
-    // Private Helper Methods to initialize components
 
     /**
      * Initializes the canvas settings for the application.
      */
-    private void setUpCanvas() {
+    private void InitializeCanvas() {
         VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
         canvasManager = new CanvasManager(canvasView);
     }
@@ -77,41 +84,37 @@ public class MainWindowController {
     /**
      * Initializes the menu bar by setting up item actions and binding the menu to saved shapes.
      */
-    private void setUpMenuBar() {
-        new SelectMenuConfigurator(selectMenu)
-                .configure();
-        new DrawShapeMenuConfigurator(drawNewShapeMenu)
-                .configure();
-        new AvailableShapesMenuConfigurator(drawnShapesMenu, DrawnShapeStorage.getInstance())
-                .configure();
+    private void InitializeMenuBar() {
+        new SelectMenuConfigurator(selectMenu).configure();
+        new DrawShapeMenuConfigurator(drawNewShapeMenu).configure();
+        new AvailableShapesMenuConfigurator(drawnShapesMenu, DrawnShapeStorage.getInstance()).configure();
     }
-
 
     /**
      * Set a welcome message to the label and bind it to {@link InformationTextProvider}.
      */
-    private void setUpInformationLabel() {
+    private void InitializeLabel() {
         informationText.textProperty().bind(InformationTextProvider.getMessage());
         setInformationText(AppMessages.WELCOME);
     }
 
-    // Event handling methods
 
     /**
-     * Handles the click event on the canvas, performing actions based on the currentAction type.
+     * Handles the click event on the canvas. The method delegates the handling
+     * of the click event to a specific strategy based on the current action type.
+     * If there's no matching strategy for the current action type, a default
+     * information message is set.
      *
      * @param event The MouseEvent representing the canvas click event.
      */
     @FXML
     private void handleCanvasClick(MouseEvent event) {
-        switch (ActionTypeProvider.getType()) {
-            case DRAW -> attemptDrawShape(event);
-            case EDIT -> attemptEditShape(event);
-            case SAVE -> attemptSaveShape(event);
-            case ROTATE -> attemptRotateShape(event);
-            case REMOVE -> attemptRemoveShape(event);
-            case EMPTY -> setInformationText(AppMessages.DEFAULT_INSTRUCTION_MSG);
-        }
+        ActionType actionType = ActionTypeProvider.getType();
+        CanvasMouseEventHandler strategy = strategies.get(actionType);
+        if (strategy != null) {
+            strategy.handle(event);
+        } else {
+            setInformationText(AppMessages.DEFAULT_INSTRUCTION_MSG);        }
     }
 
     // Shape handling methods
@@ -162,20 +165,6 @@ public class MainWindowController {
             }
         }
         ActionTypeProvider.setType(ActionType.EMPTY);
-    }
-
-    /**
-     * Displays an error alert to the user with the specified title and message.
-     *
-     * @param title   The title of the alert dialog.
-     * @param message The main content message of the alert dialog.
-     */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     /**
@@ -266,5 +255,19 @@ public class MainWindowController {
      */
     private void setInformationText(String message) {
         InformationTextProvider.setMessage(message);
+    }
+
+    /**
+     * Displays an error alert to the user with the specified title and message.
+     *
+     * @param title   The title of the alert dialog.
+     * @param message The main content message of the alert dialog.
+     */
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
