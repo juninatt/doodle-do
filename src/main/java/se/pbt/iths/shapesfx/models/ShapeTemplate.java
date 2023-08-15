@@ -14,9 +14,8 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
     protected Paint paint;
     protected double size;
     protected Paint strokeColor;
-    protected double cx; // Center x
-    protected double cy; // Center y
-    protected double[][] vertices;
+    protected double centerX;
+    protected double centerY;
 
     /**
      * Default constructor.
@@ -36,12 +35,12 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
     /**
      * Comprehensive constructor with extended properties.
      */
-    public ShapeTemplate(String name, Paint paint, Paint strokeColor, double cx, double cy) {
+    public ShapeTemplate(String name, Paint paint, Paint strokeColor, double centerX, double centerY) {
         this.name = name;
         this.paint = paint;
         this.strokeColor = strokeColor;
-        this.cx = cx;
-        this.cy = cy;
+        this.centerX = centerX;
+        this.centerY = centerY;
     }
 
     public String getName() {
@@ -76,20 +75,20 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
         this.strokeColor = strokeColor;
     }
 
-    public final double getCx() {
-        return cx;
+    public final double getCenterX() {
+        return centerX;
     }
 
-    public final void setCx(double cx) {
-        this.cx = cx;
+    public final void setCenterX(double centerX) {
+        this.centerX = centerX;
     }
 
-    public final double getCy() {
-        return cy;
+    public final double getCenterY() {
+        return centerY;
     }
 
-    public final void setCy(double cy) {
-        this.cy = cy;
+    public final void setCenterY(double centerY) {
+        this.centerY = centerY;
     }
 
     /**
@@ -98,6 +97,13 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
      * @return SVG path as string.
      */
     public abstract String toSvgPath();
+
+    /**
+     * Calculates and returns the height of the shape.
+     *
+     * @return The height of the shape.
+     */
+    protected abstract double getHeight();
 
     /**
      * Updates essential shape properties.

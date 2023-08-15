@@ -1,83 +1,30 @@
 package se.pbt.iths.shapesfx.models;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import se.pbt.iths.shapesfx.interfaces.Rotatable;
-import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
 /**
- * Represents a square shape. This class extends the {@link ShapeTemplate}
- * and provides specific implementations for drawing, SVG path conversion, and point containment
- * related to squares.
+ * Represents a square shape. This class extends the {@link VertexBasedShape}
+ * and provides specific implementations for setting the vertices of the shape and point containment.
  *
  * @see ShapeTemplate
  */
-public class Square extends ShapeTemplate implements Rotatable {
-
-    private static final int NUM_VERTICES = 4;
+public class Square extends VertexBasedShape implements Rotatable {
 
     /**
      * Constructor to initialize the square with the essential properties.
      *
-     * @param name       The name of the square.
-     * @param paint      The fill color of the square.
-     * @param sideLength The side length of the square.
+     * @param name  The name of the square.
+     * @param paint The fill color of the square.
+     * @param size  The side length of the square.
      */
-    public Square(String name, Paint paint, double sideLength) {
-        super(name, paint, sideLength);
-    }
-
-    /**
-     * Converts the square's properties to an SVG path representation.
-     *
-     * @return SVG path string representing the square.
-     */
-    @Override
-    public String toSvgPath() {
-        var halfSize = size / 2;
-        return String.format("M %f %f L %f %f L %f %f L %f %f Z", cx - halfSize, cy - halfSize, cx - halfSize, cy + halfSize, cx + halfSize, cy + halfSize, cx + halfSize, cy - halfSize);
-    }
-
-    /**
-     * Draws the square on a graphics context.
-     *
-     * @param gc The graphics context where the square is to be drawn.
-     * @param x  The X-coordinate of the starting point.
-     * @param y  The Y-coordinate of the starting point.
-     */
-    @Override
-    public void draw(GraphicsContext gc, double x, double y) {
-        cx = x;
-        cy = y;
-
-        if (vertices == null)
-            setVertices(x, y);
-
-        gc.setFill(getPaint());
-        gc.fillPolygon(vertices[ROW_X], vertices[ROW_Y], NUM_VERTICES);
-    }
-
-    private void setVertices(double x, double y) {
-        vertices = new double[2][NUM_VERTICES];
-
-        vertices[ROW_X] = new double[]{
-                x - size / 2,  // Top-left
-                x + size / 2,  // Top-right
-                x + size / 2,  // Bottom-right
-                x - size / 2   // Bottom-left
-        };
-
-        vertices[ROW_Y] = new double[]{
-                y - size / 2,  // Top-left
-                y - size / 2,  // Top-right
-                y + size / 2,  // Bottom-right
-                y + size / 2   // Bottom-left
-        };
+    public Square(String name, Paint paint, double size) {
+        super(name, paint, size, 4);
     }
 
 
     /**
-     * Determines if a point (x,y) is within the square's boundaries.
+     * Determines if the specified point (x,y) is within the square's boundaries.
      *
      * @param x The X-coordinate of the point.
      * @param y The Y-coordinate of the point.
@@ -85,14 +32,41 @@ public class Square extends ShapeTemplate implements Rotatable {
      */
     @Override
     public boolean contains(double x, double y) {
-        var leftX = cx - size / 2;
-        var topY = cy - size / 2;
+        var leftX = centerX - size / 2;
+        var topY = centerY - size / 2;
+        // Check if the point lies within the horizontal and vertical boundaries of the square
         return x >= leftX && x <= leftX + size && y >= topY && y <= topY + size;
     }
 
+    /**
+     * Initializes the vertices of the square by calculating the positions of the four corners of the square
+     * based on the given center coordinates and storing them in the vertices array.
+     *
+     * @param centerX The x-coordinate of the center of the square.
+     * @param centerY The y-coordinate of the center of the square.
+     */
     @Override
-    public void rotate(ShapeRotator rotator, double angle) {
-        vertices = rotator.rotatePoints(vertices, cx, cy, angle);
+    protected void setVertices(double centerX, double centerY) {
+        vertices = new double[2][NUM_VERTICES];
+        double halfSize = size / 2;
+        double leftX = centerX - halfSize;
+        double rightX = centerX + halfSize;
+        double topY = centerY - halfSize;
+        double bottomY = centerY + halfSize;
+
+        // Define the X and Y coordinates for the four vertices of the square
+        vertices[ROW_X] = new double[]{leftX, rightX, rightX, leftX};
+        vertices[ROW_Y] = new double[]{topY, topY, bottomY, bottomY};
+    }
+
+    /**
+     * Returns the height of the square
+     *
+     * @return The squares height
+     */
+    @Override
+    protected double getHeight() {
+        return size;
     }
 }
 
