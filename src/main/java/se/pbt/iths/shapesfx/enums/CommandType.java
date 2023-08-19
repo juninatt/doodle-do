@@ -1,6 +1,6 @@
 package se.pbt.iths.shapesfx.enums;
 
-public enum ActionType {
+public enum CommandType {
     DRAW,
     EDIT,
     SAVE,

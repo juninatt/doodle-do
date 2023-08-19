@@ -1,7 +1,8 @@
-package se.pbt.iths.shapesfx.models;
+package se.pbt.iths.shapesfx.models.shapes.polygonal;
 
 import javafx.scene.paint.Paint;
 import se.pbt.iths.shapesfx.interfaces.Rotatable;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 
 /**
  * Represents an equilateral triangle shape. This class extends the {@link VertexBasedShape}
@@ -55,7 +56,7 @@ public class Triangle extends VertexBasedShape implements Rotatable {
      * @param centerY The y-coordinate of the center of the triangle.
      */
     @Override
-    protected void setVertices(double centerX, double centerY) {
+    protected void calculateVertices(double centerX, double centerY) {
         vertices = new double[2][NUM_VERTICES];
 
         double bottomLeftX = centerX - size / 2;
@@ -66,6 +67,26 @@ public class Triangle extends VertexBasedShape implements Rotatable {
         // Define the X and Y coordinates for the three vertices of the triangle
         vertices[ROW_X] = new double[]{bottomLeftX, bottomRightX, centerX};
         vertices[ROW_Y] = new double[]{bottomY, bottomY, topY};
+    }
+
+    /**
+     * Creates and returns a clone of this Triangle object.
+     * The clone has the same name, paint, size, center coordinates,
+     * and vertices as the original.
+     *
+     * @return a clone of this instance.
+     */
+    @Override
+    public Triangle clone() {
+        var clone = new Triangle(name, paint, size);
+        clone.setCenterX(centerX);
+        clone.setCenterY(centerY);
+        if (vertices == null)
+            clone.calculateVertices(centerX, centerY);
+        else {
+            clone.setVertices(cloneVertices());
+        }
+        return clone;
     }
 
     /**

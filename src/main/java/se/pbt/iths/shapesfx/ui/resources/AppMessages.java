@@ -14,7 +14,14 @@ public class AppMessages {
     public static final String SVG_SAVE_SUCCESS_MSG = "Shape saved successfully as SVG!";
     public static final String SVG_SAVE_CANCELLED_MSG = "Shape saving was cancelled or an unknown error occurred.";
     public static final String SVG_SAVE_ERROR_MSG = "Shape saving was cancelled or an unknown error occurred.";
-
+    public static final String UNABLE_TO_UNDO_MSG = "Unable to undo action";
+    public static final String UNABLE_TO_REDO_MSG = "Unable to redo action";
+    public static final String INITIALIZE_SHAPE_MESSAGE = "Make the desired changes to your shape. Press the button when you are done!";
+    public static final String SHAPE_PROPERTIES_REQUIRED = "All of the shape's properties must have a value";
+    public static final String IMPROVEMENT_MESSAGE = "What an improvement!";
+    public static final String SORRY_MESSAGE = "Ooops! Something seems to have gone wrong there. Sorry about that please try again";
+    public static final String SHAPE_CREATION_SUCCESS = "Click on the canvas to add your shape.";
+    public static final String SHAPE_NAME_TAKEN = "Sorry but that name is taken.";
 
     private AppMessages() {}
 }

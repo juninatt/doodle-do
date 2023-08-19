@@ -3,7 +3,7 @@ package se.pbt.iths.shapesfx.ui.config;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import se.pbt.iths.shapesfx.models.ShapeTemplate;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 

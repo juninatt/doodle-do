@@ -1,7 +1,7 @@
 package se.pbt.iths.shapesfx.operations;
 
 import se.pbt.iths.shapesfx.exceptions.ShapeSaveException;
-import se.pbt.iths.shapesfx.models.ShapeTemplate;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 import javafx.stage.FileChooser;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 

@@ -6,35 +6,28 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.models.ShapeTemplate;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
+import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 
-// TODO: Improve exception handling
-// TODO: Handle name duplication
 /**
  * Controller class for the shape edit dialog window.
  * Handles user interactions and shape editing based on user input.
  */
 public class EditShapeWindowController {
 
-    private static final String INITIALIZE_SHAPE_MESSAGE = "Make the desired changes to your shape. Press the button when you are done!";
-    private static final String SHAPE_PROPERTIES_REQUIRED = "All of the shape's properties must have a value";
-    private static final String IMPROVEMENT_MESSAGE = "What an improvement!";
-    private static final String SORRY_MESSAGE = "Ooops! Something seems to have gone wrong there. Sorry about that please try again";
-
-    private String newName;
+    // Non-final private instance fields
     private double newSize;
     private Color newColor;
 
+    // @FXML generated fields
     @FXML
     private TextField shapeNameField;
     @FXML
     private Slider sizeSlider;
     @FXML
     private ColorPicker colorPicker;
-
 
 
     /**
@@ -50,52 +43,60 @@ public class EditShapeWindowController {
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> newSize = newValue.doubleValue());
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> newColor = newValue);
 
-        setInformationText(INITIALIZE_SHAPE_MESSAGE);
+        setInformationText(AppMessages.INITIALIZE_SHAPE_MESSAGE);
     }
 
     /**
-     * Sets default values to shape properties.
+     * Sets the default values for the user input controls based on the properties of the specified shape.
      *
-     * @param shapeToEdit the shape to be edited
+     * @param shapeToEdit The shape whose properties will be used to set the default values. Must not be null.
      */
     private void setDefaultValues(ShapeTemplate shapeToEdit) {
         newSize = shapeToEdit.getSize();
         newColor = (Color) shapeToEdit.getPaint();
-        newName = shapeToEdit.getName();
 
-        shapeNameField.setText(newName);
+        shapeNameField.setText(shapeToEdit.getName());
         colorPicker.setValue(newColor);
         sizeSlider.setValue(newSize);
     }
 
 
     /**
-     * Handles the confirm shape button click event.
-     * Updates the selected shape based on user input.
+     * Applies changes to the selected shape based on user input when the "Confirm Changes" button is clicked.
+     * If any required field is missing, an error message is displayed. Otherwise, the shape's properties are
+     * updated, a success message is displayed, and the current window is closed.
      */
     @FXML
     private void confirmChangesButtonClicked() {
         if (!allFieldsHaveValues()) {
-            setInformationText(SHAPE_PROPERTIES_REQUIRED);
+            setInformationText(AppMessages.SHAPE_PROPERTIES_REQUIRED);
         } else {
             try {
-                DrawnShapeStorage.getInstance().getByName(SelectedShape.getInstance().getName())
-                        .ifPresent(shape -> shape.update(newName, newColor, newSize));
-
-                setInformationText(IMPROVEMENT_MESSAGE);
+                updateShapeProperties();
+                setInformationText(AppMessages.IMPROVEMENT_MESSAGE);
                 closeCurrentWindow();
             } catch (RuntimeException runtimeException) {
-                setInformationText(SORRY_MESSAGE);
+                setInformationText(AppMessages.SORRY_MESSAGE);
                 runtimeException.printStackTrace();
             }
         }
     }
 
     /**
-     * Closes the current window.
+     * Updates the properties of the currently selected shape with values from the user input fields.
+     */
+    private void updateShapeProperties() {
+        var shape = SelectedShape.getInstance().getSelectedShape();
+        shape.setName(shapeNameField.getText());
+        shape.setPaint(newColor);
+        shape.setSize(newSize);
+    }
+
+    /**
+     * Closes the current window (stage).
      */
     private void closeCurrentWindow() {
-        Stage stage = (Stage) sizeSlider.getScene().getWindow();
+        var stage = (Stage) sizeSlider.getScene().getWindow();
         stage.close();
     }
 

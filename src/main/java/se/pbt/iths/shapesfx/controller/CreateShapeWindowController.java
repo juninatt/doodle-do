@@ -7,26 +7,22 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.factory.ShapeFactory;
-import se.pbt.iths.shapesfx.models.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
+import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 
-// TODO: Improve exception handling
 /**
  * Controller class for the shape creation dialog window.
  * Handles user interactions and shape creation based on user input.
  */
 public class CreateShapeWindowController {
 
-    private static final String INITIALIZE_SHAPE_MESSAGE = "Set the size and color of your shape and press 'Confirm'.";
-    private static final String SHAPE_PROPERTIES_REQUIRED = "All of the shape's properties must have a value";
-    private static final String SHAPE_CREATION_SUCCESS = "Click on the canvas to add your shape.";
-    private static final String SHAPE_NAME_TAKEN = "Sorry but that name is taken.";
-
+    // Non-final private instance fields
     private double size;
     private Paint color;
 
+    // @FXML generated fields
     @FXML
     private TextField shapeNameField;
     @FXML
@@ -46,32 +42,41 @@ public class CreateShapeWindowController {
 
         sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> size = newValue.doubleValue());
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> color = newValue);
-        InformationTextProvider.getMessage().set(INITIALIZE_SHAPE_MESSAGE);
+        InformationTextProvider.getMessage().set(AppMessages.INITIALIZE_SHAPE_MESSAGE);
     }
 
     /**
      * Handles the confirm shape button click event.
-     * Creates the selected shape based on the dialog title, sets it as the selected shape in {@link SelectedShape}.
+     * Creates the selected shape based on the dialog title, sets it as the selected shape in {@link SelectedShape},
+     * and closes the stage if the creation was successful.
      */
     @FXML
     private void confirmShapeButtonClicked() {
-        Stage stage = (Stage) sizeSlider.getScene().getWindow();
-        if (!allFieldsHaveValues()) {
-            InformationTextProvider.getMessage().set(SHAPE_PROPERTIES_REQUIRED);
-        } else {
-            String name = shapeNameField.getText();
-            ShapeTemplate newShape;
+        var stage = (Stage) sizeSlider.getScene().getWindow();
+        String name = shapeNameField.getText();
 
-            var optionalDuplicateName = DrawnShapeStorage.getInstance().getByName(name);
-            if (optionalDuplicateName.isEmpty()) {
-                newShape = ShapeFactory.createShape(stage.getTitle(), name, color, size);
-                DrawnShapeStorage.getInstance().addShape(newShape);
-                SelectedShape.getInstance().setSelectedShape(newShape);
-                InformationTextProvider.getMessage().set(SHAPE_CREATION_SUCCESS);
-                stage.close();
-            }
-            else InformationTextProvider.getMessage().set(SHAPE_NAME_TAKEN);
+        if (!allFieldsHaveValues()) {
+            InformationTextProvider.getMessage().set(AppMessages.SHAPE_PROPERTIES_REQUIRED);
         }
+        else if (DrawnShapeStorage.getInstance().exists(shapeNameField.getText())) {
+            InformationTextProvider.getMessage().set(AppMessages.SHAPE_NAME_TAKEN);
+        }
+        else {
+            createShapeAndMakeSelected(stage.getTitle(), name);
+            InformationTextProvider.getMessage().set(AppMessages.SHAPE_CREATION_SUCCESS);
+            stage.close();
+        }
+    }
+
+    /**
+     * Creates a new shape and sets it as the {@link SelectedShape}.
+     * @param shapeType the type of shape to create
+     * @param name the name for the new shape
+     */
+    private void createShapeAndMakeSelected(String shapeType, String name) {
+        var newShape = ShapeFactory.createShape(shapeType, name, color, size);
+        DrawnShapeStorage.getInstance().addShape(newShape);
+        SelectedShape.getInstance().setSelectedShape(newShape);
     }
 
 

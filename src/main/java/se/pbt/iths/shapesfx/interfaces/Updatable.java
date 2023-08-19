@@ -1,8 +1,8 @@
 package se.pbt.iths.shapesfx.interfaces;
 
-import javafx.scene.paint.Paint;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 
 @FunctionalInterface
 public interface Updatable {
-    void update(String name, Paint paint, double size);
+    void update(ShapeTemplate updatingValues);
 }

@@ -1,10 +1,12 @@
-package se.pbt.iths.shapesfx.models;
+package se.pbt.iths.shapesfx.models.shapes.polygonal;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import se.pbt.iths.shapesfx.interfaces.Rotatable;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,6 +22,9 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
     // Instance variables
     protected double[][] vertices;
 
+    public void setVertices(double[][] vertices) {
+        this.vertices = vertices;
+    }
 
     /**
      * Constructs a vertex-based shape with the essential properties.
@@ -68,7 +73,7 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
 
         // Initializing the vertices if they are not set
         if (vertices == null)
-            setVertices(centerX, centerY);
+            calculateVertices(centerX, centerY);
 
         // Draws the shape on the canvas of the graphics context
         gc.setFill(getPaint());
@@ -86,6 +91,12 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
         vertices = rotator.rotatePoints(vertices, centerX, centerY, angle);
     }
 
+    @Override
+    public void setSize(double size) {
+        super.setSize(size);
+        calculateVertices(centerX, centerY);
+    }
+
     /**
      * Generates an SVG path string for the shape using the vertices by iterating through the vertices array.
      *
@@ -99,6 +110,22 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
                 .collect(Collectors.joining(" ")) + " Z";
     }
 
+    @Override
+    public void update(ShapeTemplate updatingValues) {
+        super.update(updatingValues);
+        if (updatingValues instanceof VertexBasedShape vertexBasedUpdatingValues) {
+            setVertices(vertexBasedUpdatingValues.cloneVertices());
+        }
+    }
+
+
+    protected double[][] cloneVertices() {
+        return Arrays.stream(vertices)
+                .map(double[]::clone)
+                .toArray(double[][]::new);
+    }
+
+
     /**
      * Defines the shape's vertices based on the given central coordinates.
      * How these coordinates translate into vertices depends on the individual characteristics of the shape.
@@ -106,5 +133,5 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
      * @param centerX The horizontal midpoint of the shape.
      * @param centerY The vertical midpoint of the shape.
      */
-    protected abstract void setVertices(double centerX, double centerY);
+    protected abstract void calculateVertices(double centerX, double centerY);
 }

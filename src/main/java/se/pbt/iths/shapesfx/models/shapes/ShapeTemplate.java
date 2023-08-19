@@ -1,4 +1,4 @@
-package se.pbt.iths.shapesfx.models;
+package se.pbt.iths.shapesfx.models.shapes;
 
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -106,16 +106,23 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
     protected abstract double getHeight();
 
     /**
+     * Clones the current object, creating a deep copy.
+     *
+     * @return A cloned instance of the ShapeTemplate.
+     */
+    public abstract ShapeTemplate clone();
+
+    /**
      * Updates essential shape properties.
      *
-     * @param name  Updated name of the shape.
-     * @param paint Updated fill color of the shape.
-     * @param size  Updated size or radius of the shape.
+     * @param updatingValues The {@link ShapeTemplate} object holding the new values.
      */
     @Override
-    public void update(String name, Paint paint, double size) {
-        this.name = name;
-        this.paint = paint;
-        this.size = size;
+    public void update(ShapeTemplate updatingValues) {
+        this.name = updatingValues.getName();
+        this.paint = updatingValues.getPaint();
+        this.size = updatingValues.getSize();
+        this.centerX = updatingValues.getCenterX();
+        this.centerY = updatingValues.getCenterY();
     }
 }

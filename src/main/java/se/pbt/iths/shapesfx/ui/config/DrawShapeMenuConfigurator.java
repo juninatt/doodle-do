@@ -3,8 +3,8 @@ package se.pbt.iths.shapesfx.ui.config;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.stage.Stage;
-import se.pbt.iths.shapesfx.enums.ActionType;
-import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
+import se.pbt.iths.shapesfx.enums.CommandType;
+import se.pbt.iths.shapesfx.ui.utils.CommandTypeProvider;
 
 /**
  * Configures the drawing menu, associating menu items with specific actions related to shape drawing.
@@ -29,7 +29,7 @@ public class DrawShapeMenuConfigurator {
      */
     public void configure() {
         menu.getItems().forEach(menuItem -> menuItem.setOnAction(event -> {
-            ActionTypeProvider.setType(ActionType.DRAW);
+            CommandTypeProvider.setCommandType(CommandType.DRAW);
             MenuItem sourceItem = (MenuItem) event.getSource();
             var configurator = new FXMLStageConfigurator(new Stage());
             configurator.getConfiguredStage(sourceItem.getText(), "create-shape-view.fxml")

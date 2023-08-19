@@ -1,7 +1,8 @@
-package se.pbt.iths.shapesfx.models;
+package se.pbt.iths.shapesfx.models.shapes.polygonal;
 
 import javafx.scene.paint.Paint;
 import se.pbt.iths.shapesfx.interfaces.Rotatable;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 
 /**
  * Represents a square shape. This class extends the {@link VertexBasedShape}
@@ -46,7 +47,7 @@ public class Square extends VertexBasedShape implements Rotatable {
      * @param centerY The y-coordinate of the center of the square.
      */
     @Override
-    protected void setVertices(double centerX, double centerY) {
+    protected void calculateVertices(double centerX, double centerY) {
         vertices = new double[2][NUM_VERTICES];
         double halfSize = size / 2;
         double leftX = centerX - halfSize;
@@ -57,6 +58,25 @@ public class Square extends VertexBasedShape implements Rotatable {
         // Define the X and Y coordinates for the four vertices of the square
         vertices[ROW_X] = new double[]{leftX, rightX, rightX, leftX};
         vertices[ROW_Y] = new double[]{topY, topY, bottomY, bottomY};
+    }
+
+    /**
+     * Creates and returns a clone of this Square object.
+     * The clone has the same name, paint, size, center coordinates,
+     * and vertices as the original. If vertices is null new points will be calculated.
+     *
+     * @return a clone of this instance.
+     */
+    @Override
+    public Square clone() {
+        Square cloned = new Square(name, paint, size);
+        cloned.setCenterX(centerX);
+        cloned.setCenterY(centerY);
+        if (vertices == null)
+            cloned.calculateVertices(centerX, centerY);
+        else
+            cloned.setVertices(this.cloneVertices());
+        return cloned;
     }
 
     /**

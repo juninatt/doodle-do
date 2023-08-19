@@ -2,45 +2,49 @@ package se.pbt.iths.shapesfx.controller;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import se.pbt.iths.shapesfx.commands.*;
 import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
-import se.pbt.iths.shapesfx.enums.ActionType;
-import se.pbt.iths.shapesfx.exceptions.ShapeSaveException;
-import se.pbt.iths.shapesfx.interfaces.Rotatable;
-import se.pbt.iths.shapesfx.interfaces.CanvasMouseEventHandler;
-import se.pbt.iths.shapesfx.models.ShapeTemplate;
+import se.pbt.iths.shapesfx.enums.CommandType;
+import se.pbt.iths.shapesfx.interfaces.CanvasCommand;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
-import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.operations.ShapeSaver;
 import se.pbt.iths.shapesfx.ui.config.AvailableShapesMenuConfigurator;
 import se.pbt.iths.shapesfx.ui.config.DrawShapeMenuConfigurator;
-import se.pbt.iths.shapesfx.ui.config.FXMLStageConfigurator;
 import se.pbt.iths.shapesfx.ui.config.SelectMenuConfigurator;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
-import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
+import se.pbt.iths.shapesfx.ui.utils.CommandTypeProvider;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.ui.views.canvas.CanvasView;
 import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+import java.util.function.Supplier;
 
 
 /**
- * The main controller class for the Shapes application.
- * Handles user interactions and shape creation/drawing.
+ * Controller for the main window of the Shapes application.
+ * Manages user interactions, shape operations, and command execution,
+ * including undo/redo functionality and menu configuration.
  */
 public class MainWindowController {
 
+    // Final instance fields
+    private final Stack<CanvasCommand> redoStack;
+    private final Stack<CanvasCommand> undoStack;
+    private final Map<CommandType, Supplier<CanvasCommand>> commands;
+    private final ShapeSaver shapeSaver;
+    private final ShapeRotator shapeRotator;
+
+    // Non-final private instance fields
     private CanvasManager canvasManager;
 
-    private final Map<ActionType, CanvasMouseEventHandler> strategies;
-
+    // @FXML generated fields
     @FXML
     private CanvasView canvasView;
     @FXML
@@ -52,23 +56,29 @@ public class MainWindowController {
     @FXML
     private Label informationText;
 
+    /**
+     * Constructor that initializes shape manipulation and management utilities.
+     * It prepares essential components such as rotation, saving, and undo/redo stacks,
+     * enabling full control over shape interactions in the application's main window.
+     */
     public MainWindowController() {
-        strategies = new HashMap<>();
-        strategies.put(ActionType.DRAW, this::attemptDrawShape);
-        strategies.put(ActionType.ROTATE, this::attemptRotateShape);
-        strategies.put(ActionType.EDIT, this::attemptEditShape);
-        strategies.put(ActionType.REMOVE, this::attemptRemoveShape);
-        strategies.put(ActionType.SAVE, this::attemptSaveShape);
-        ActionTypeProvider.setType(ActionType.EMPTY);
+        shapeRotator = new ShapeRotator();
+        redoStack = new Stack<>();
+        commands = new HashMap<>();
+        undoStack = new Stack<>();
+        shapeSaver = new ShapeSaver();
+
     }
 
 
     /**
      * Initializes the ShapesController with its default values and required instances.
-     * Binds the menu items and information text property and sets action events for items.
+     * Binds the menu items and information text property, sets action events for items
+     * and initializes command mapping.
      */
     public void initialize() {
         InitializeCanvas();
+        initializeCommands();
         InitializeMenuBar();
         InitializeLabel();
     }
@@ -82,7 +92,21 @@ public class MainWindowController {
     }
 
     /**
-     * Initializes the menu bar by setting up item actions and binding the menu to saved shapes.
+     * Initializes the command mapping for various shape operations.
+     * The command type is subsequently set to empty as a default state.
+     */
+    private void initializeCommands() {
+        commands.put(CommandType.DRAW, () -> new DrawShapeCommand(canvasManager));
+        commands.put(CommandType.ROTATE, () -> new RotateShapeCommand(canvasManager, shapeRotator, 45.0));
+        commands.put(CommandType.EDIT, () -> new EditShapeCommand(canvasManager));
+        commands.put(CommandType.REMOVE, () -> new RemoveShapeCommand(canvasManager));
+        commands.put(CommandType.SAVE, () -> new SaveShapeCommand(canvasManager, shapeSaver));
+        CommandTypeProvider.setCommandType(CommandType.EMPTY);
+    }
+
+    /**
+     * Initializes the menu bar, configuring selection, drawing, and available shapes menus.
+     * Utilizes configurators to set up menu behavior and bind them to corresponding shape actions.
      */
     private void InitializeMenuBar() {
         new SelectMenuConfigurator(selectMenu).configure();
@@ -100,151 +124,42 @@ public class MainWindowController {
 
 
     /**
-     * Handles the click event on the canvas. The method delegates the handling
-     * of the click event to a specific strategy based on the current action type.
-     * If there's no matching strategy for the current action type, a default
-     * information message is set.
+     * Handles the click event on the canvas. This method uses the current {@link CommandType}
+     * to create a corresponding command object {@link CanvasCommand},
+     * then delegates the handling of the click event to that command.
+     * If a command is executed, it's pushed onto the undo stack, and the redo stack is cleared.
      *
      * @param event The MouseEvent representing the canvas click event.
      */
     @FXML
     private void handleCanvasClick(MouseEvent event) {
-        ActionType actionType = ActionTypeProvider.getType();
-        CanvasMouseEventHandler strategy = strategies.get(actionType);
-        if (strategy != null) {
-            strategy.handle(event);
+        CommandType actionType = CommandTypeProvider.getCommandType();
+        CanvasCommand command = createCommand(actionType);
+        if (command != null) {
+            command.execute(event);
+            undoStack.push(command);
+            redoStack.clear();
         } else {
-            setInformationText(AppMessages.DEFAULT_INSTRUCTION_MSG);        }
-    }
-
-    // Shape handling methods
-
-    /**
-     * Attempts to edit a shape based on the user's click point. If a shape is selected, an edit view is launched;
-     * otherwise, a message is displayed to inform the user that no shape was selected. After editing, the canvas
-     * is refreshed to reflect any changes.
-     *
-     * @param event The MouseEvent indicating where the user clicked.
-     */
-    private void attemptEditShape(MouseEvent event) {
-        var shapeToEdit = canvasManager.findFirstShapeAtClickPoint(event);
-        if (shapeToEdit.isEmpty())
-            setInformationText(AppMessages.NO_SHAPE_SELECTED_MSG);
-        else {
-            SelectedShape.getInstance().setSelectedShape(shapeToEdit.get());
-            var windowLoader = new FXMLStageConfigurator(new Stage());
-            windowLoader.getConfiguredStage(shapeToEdit.get().getName(), "edit-shape-view.fxml").showAndWait();
-            canvasManager.clearCanvas();
-            canvasManager.redrawShapes();
-            SelectedShape.getInstance().reset();
-        }
-        ActionTypeProvider.setType(ActionType.EMPTY);
-    }
-
-    /**
-     * Attempts to save a shape based on the user's click point. If a shape is selected, it is saved as SVG;
-     * otherwise, relevant messages are displayed to inform the user of the save status or errors.
-     *
-     * @param event The MouseEvent indicating where the user clicked.
-     */
-    private void attemptSaveShape(MouseEvent event) {
-        var shapeToSave = canvasManager.findFirstShapeAtClickPoint(event);
-        if (shapeToSave.isEmpty()) {
-            setInformationText(AppMessages.NO_SHAPE_SELECTED_MSG);
-        } else {
-            ShapeSaver saver = new ShapeSaver();
-            try {
-                boolean success = saver.saveShapeAsSVG(shapeToSave.get());
-                if (success) {
-                    setInformationText(AppMessages.SVG_SAVE_SUCCESS_MSG);
-                } else {
-                    setInformationText(AppMessages.SVG_SAVE_CANCELLED_MSG);
-                }
-            } catch (ShapeSaveException shapeSaveException) {
-                showAlert(AppMessages.SVG_SAVE_ERROR_MSG, shapeSaveException.getMessage());
-            }
-        }
-        ActionTypeProvider.setType(ActionType.EMPTY);
-    }
-
-    /**
-     * Attempts to rotate the shape at the mouse event position by a given angle.
-     * If the shape implements the {@link Rotatable} interface, it will be rotated.
-     * If no shape is found at the click point, a message is displayed to inform the user that no shape was selected.
-     *
-     * @param event The MouseEvent representing the canvas click event.
-     */
-    private void attemptRotateShape(MouseEvent event) {
-        var rotator = new ShapeRotator();
-        double angle = 45;
-        var shape = canvasManager.findFirstShapeAtClickPoint(event);
-
-        if (shape.isEmpty())
-            setInformationText(AppMessages.NO_SHAPE_SELECTED_MSG);
-        else {
-            if (shape.get() instanceof Rotatable rotatableShape) {
-                rotatableShape.rotate(rotator, angle);
-                canvasManager.clearCanvas();
-                canvasManager.redrawShapes();
-            }
-        }
-    }
-
-
-    /**
-     * Attempts to draw the currently selected shape onto the canvas based on the user's click position.
-     * If no shape is selected, a default instruction message is displayed. In the event of a runtime
-     * exception during the drawing process, an error message is displayed and the exception is printed.
-     *
-     * @param event The MouseEvent indicating where the user clicked on the canvas.
-     */
-    private void attemptDrawShape(MouseEvent event) {
-        var shapeToDraw = SelectedShape.getInstance().getSelectedShape();
-
-        if (shapeToDraw == null)
             setInformationText(AppMessages.DEFAULT_INSTRUCTION_MSG);
-        else {
-            try {
-                canvasManager.performDraw(event.getX(), event.getY(), shapeToDraw);
-                setInformationText(AppMessages.BEAUTIFUL);
-                SelectedShape.getInstance().reset();
-            } catch (RuntimeException runtimeException) {
-                setInformationText(AppMessages.DEFAULT_INSTRUCTION_MSG);
-                runtimeException.printStackTrace();
-            }
         }
     }
 
-
     /**
-     * Attempts to remove the shape at the mouse event position.
+     * Creates and returns a {@link CanvasCommand} based on the specified {@link CommandType}.
+     * Utilizes a pre-set mapping of command types to corresponding command suppliers.
      *
-     * @param event The MouseEvent representing the canvas click event.
+     * @param commandType The type of command to create.
+     * @return The created command corresponding to the given type.
+     * @throws IllegalArgumentException if the specified command type is not recognized.
      */
-    private void attemptRemoveShape(MouseEvent event) {
-        var optionalShape = canvasManager.findFirstShapeAtClickPoint(event);
-
-        if (optionalShape.isPresent()) {
-            removeShapeAndReDrawCanvas(optionalShape.get());
-        } else {
-            setInformationText(AppMessages.NO_SHAPE_SELECTED_MSG);
+    private CanvasCommand createCommand(CommandType commandType) {
+        var commandSupplier = commands.get(commandType);
+        if (commandSupplier == null) {
+            throw new IllegalArgumentException("Unknown command type: " + commandType);
         }
-    ActionTypeProvider.setType(ActionType.EMPTY);
+        return commandSupplier.get();
     }
 
-    // Drawing and Canvas Manipulation Methods
-
-    /**
-     * Removes the specified shape template from the drawn shapes menu and updates the canvas.
-     *
-     * @param shape The shape template to remove.
-     */
-    private void removeShapeAndReDrawCanvas(ShapeTemplate shape) {
-        DrawnShapeStorage.getInstance().removeShape(shape);
-        canvasManager.clearCanvas();
-        canvasManager.redrawShapes();
-        setInformationText(AppMessages.SHAPE_REMOVAL_MSG + shape.getName());
-    }
 
     // Utility and Miscellaneous Methods
 
@@ -258,16 +173,30 @@ public class MainWindowController {
     }
 
     /**
-     * Displays an error alert to the user with the specified title and message.
-     *
-     * @param title   The title of the alert dialog.
-     * @param message The main content message of the alert dialog.
+     * Reverts the last executed command if possible. If the undo stack is empty, an appropriate
+     * message is displayed to the user.
      */
-    private void showAlert(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    public void undo() {
+        if (undoStack.isEmpty())
+            setInformationText(AppMessages.UNABLE_TO_UNDO_MSG);
+        else {
+            CanvasCommand lastCommand = undoStack.pop();
+            lastCommand.undo();
+            redoStack.push(lastCommand);
+        }
+    }
+
+    /**
+     * Reverts last undo action if possible.
+     * If redo stack is empty, an appropriate message will be displayed to the user
+     */
+    public void redo() {
+        if (redoStack.isEmpty())
+            setInformationText(AppMessages.UNABLE_TO_REDO_MSG);
+        else {
+            CanvasCommand lastUndoneCommand = redoStack.pop();
+            lastUndoneCommand.redo();
+            undoStack.push(lastUndoneCommand);
+        }
     }
 }

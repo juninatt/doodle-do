@@ -2,7 +2,7 @@ package se.pbt.iths.shapesfx.modelsmanagement;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import se.pbt.iths.shapesfx.models.ShapeTemplate;
+import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 
 import java.util.Optional;
 
@@ -66,6 +66,15 @@ public class DrawnShapeStorage {
         }
     }
 
+    public synchronized void removeShape(String name) {
+        if (name != null) {
+            drawnShapes.stream().filter(shapeTemplate -> shapeTemplate.getName().equals(name))
+                    .findFirst().ifPresent(drawnShapes::remove);
+        } else {
+            throw new IllegalArgumentException("Shape cannot be null");
+        }
+    }
+
     /**
      * Returns the ObservableList of stored shapes, to allow observers to react to changes.
      *
@@ -75,11 +84,23 @@ public class DrawnShapeStorage {
         return drawnShapes;
     }
 
-    public synchronized Optional<ShapeTemplate> getByName(String name) {
+    /**
+     * Retrieves a shape from the drawn shapes based on its name.
+     *
+     * @param name the name of the shape to retrieve
+     * @return an Optional containing the found shape if present, or an empty Optional if no shape with the given name is found
+     */
+    public Optional<ShapeTemplate> get(String name) {
         return drawnShapes.stream()
                 .filter(shape -> shape.getName().equals(name))
                 .findFirst();
     }
+
+    public boolean exists(String name) {
+        return drawnShapes.stream()
+                .anyMatch(shape -> shape.getName().equals(name));
+    }
+
     /**
      * The InstanceHolder is a private static class that contains the Singleton instance of DrawnShapesMenu.
      * It is initialized when getInstance() is first called, ensuring lazy initialization and thread-safety.

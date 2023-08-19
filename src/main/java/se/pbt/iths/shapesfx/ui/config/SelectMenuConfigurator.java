@@ -3,8 +3,8 @@ package se.pbt.iths.shapesfx.ui.config;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import se.pbt.iths.shapesfx.enums.ActionType;
-import se.pbt.iths.shapesfx.ui.utils.ActionTypeProvider;
+import se.pbt.iths.shapesfx.enums.CommandType;
+import se.pbt.iths.shapesfx.ui.utils.CommandTypeProvider;
 
 /**
  * Configures the select menu items and associates each item with a specific action.
@@ -49,7 +49,7 @@ public class SelectMenuConfigurator {
         var menuItem = (MenuItem) event.getSource();
         var text = menuItem.getText().toUpperCase();
         try {
-            ActionTypeProvider.setType(ActionType.valueOf(text));
+            CommandTypeProvider.setCommandType(CommandType.valueOf(text));
         } catch (IllegalArgumentException illegalArgumentException) {
             handleInvalidAction(illegalArgumentException);
         }
@@ -61,7 +61,7 @@ public class SelectMenuConfigurator {
      * @param illegalArgumentException the exception that occurred.
      */
     private void handleInvalidAction(IllegalArgumentException illegalArgumentException) {
-        ActionTypeProvider.setType(ActionType.EMPTY);
+        CommandTypeProvider.setCommandType(CommandType.EMPTY);
         illegalArgumentException.printStackTrace();
     }
 }
