@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@DisplayName("FXMLStageConfigurator tests:")
 public class FXMLStageConfiguratorTest {
 
     Stage mockStage = mock(Stage.class);

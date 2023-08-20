@@ -1,5 +1,6 @@
 package se.pbt.iths.shapesfx.utils;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -7,12 +8,18 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@DisplayName("ShapeRotator tests:")
 class ShapeRotatorTest {
 
+    static ShapeRotator shapeRotator;
+    @BeforeAll
+    static void init() {
+        shapeRotator = new ShapeRotator();
+    }
+
     @Test
-    @DisplayName("Verify rotation of points by 90 degrees around the origin")
+    @DisplayName("Points rotate by 90 degrees around its center")
     void testRotatePoints_90Degrees() {
-        ShapeRotator shapeRotator = new ShapeRotator();
         double[][] vertices = {{0, 2, 2, 0}, {0, 0, 2, 2}};
         double[][] expected = {{0, 0, -2, -2}, {0, 2, 2, 0}};
         double[][] result = shapeRotator.rotatePoints(vertices, 0, 0, 90);
@@ -21,9 +28,8 @@ class ShapeRotatorTest {
     }
 
     @Test
-    @DisplayName("Verify rotation of points by 180 degrees around a custom center point (3, 3)")
+    @DisplayName("Points rotate by 180 degrees around a custom center point (3, 3)")
     void testRotatePoints_180Degrees_CustomCenter() {
-        ShapeRotator shapeRotator = new ShapeRotator();
         double[][] vertices = {{3, 4}, {3, 4}};
         double[][] expected = {{3, 2}, {3, 2}};
         double[][] result = shapeRotator.rotatePoints(vertices, 3, 3, 180);
@@ -32,9 +38,8 @@ class ShapeRotatorTest {
     }
 
     @Test
-    @DisplayName("Verify no rotation when angle is 0 degrees")
+    @DisplayName("Points dont rotate when angle is 0 degrees")
     void testRotatePoints_NoRotation() {
-        ShapeRotator shapeRotator = new ShapeRotator();
         double[][] vertices = {{3, 5}, {3, 5}};
         double[][] expected = {{3, 5}, {3, 5}};
         double[][] result = shapeRotator.rotatePoints(vertices, 3, 3, 0);
@@ -43,9 +48,8 @@ class ShapeRotatorTest {
     }
 
     @Test
-    @DisplayName("Verify rotation of a triangle by 90 degrees around the origin")
+    @DisplayName("Rotates triangle by 90 degrees around its center")
     void testRotateTriangle_90Degrees() {
-        ShapeRotator shapeRotator = new ShapeRotator();
         double[][] vertices = {{0, 1, 0}, {0, 0, 1}}; // Triangle vertices
         double[][] expected = {{0, 0, -1}, {0, 1, 0}};
         double[][] result = shapeRotator.rotatePoints(vertices, 0, 0, 90);
@@ -54,9 +58,8 @@ class ShapeRotatorTest {
     }
 
     @Test
-    @DisplayName("Verify rotation of a triangle by 180 degrees around its centroid")
+    @DisplayName("Rotates triangle by 180 degrees around its center")
     void testRotateTriangle_180Degrees_Centroid() {
-        ShapeRotator shapeRotator = new ShapeRotator();
         double[][] vertices = {{0, 1, 2}, {0, 2, 0}}; // Triangle vertices
         double[][] expected = {{2, 1, 0}, {0, -2, 0}};
         double[][] result = shapeRotator.rotatePoints(vertices, 1, 0, 180);
@@ -65,9 +68,8 @@ class ShapeRotatorTest {
     }
 
     @Test
-    @DisplayName("Verify rotation of a square by 180 degrees around its center")
+    @DisplayName("Rotates square by 180 degrees around its center")
     void testRotateSquare_180Degrees_Center() {
-        ShapeRotator shapeRotator = new ShapeRotator();
         double[][] vertices = {{0, 0, 1, 1}, {0, 1, 1, 0}}; // Square vertices
         double[][] expected = {{1, 1, 0, 0}, {1, 0, 0, 1}};
         double[][] result = shapeRotator.rotatePoints(vertices, 0.5, 0.5, 180);
