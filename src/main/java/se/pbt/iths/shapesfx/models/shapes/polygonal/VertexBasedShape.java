@@ -7,6 +7,7 @@ import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 import se.pbt.iths.shapesfx.utils.ShapeRotator;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -71,11 +72,9 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
         this.centerX = centerX;
         this.centerY = centerY;
 
-        // Initializing the vertices if they are not set
         if (vertices == null)
             calculateVertices(centerX, centerY);
 
-        // Draws the shape on the canvas of the graphics context
         gc.setFill(getPaint());
         gc.fillPolygon(vertices[ROW_X], vertices[ROW_Y], NUM_VERTICES);
     }
@@ -91,6 +90,11 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
         vertices = rotator.rotatePoints(vertices, centerX, centerY, angle);
     }
 
+    /**
+     * Sets the size of the shape, recalculates vertices, and updates the center point.
+     *
+     * @param size The new size of the shape.
+     */
     @Override
     public void setSize(double size) {
         super.setSize(size);
@@ -106,10 +110,16 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
     public String toSvgPath() {
         // Converting the vertices into an SVG path by looping through them with a stream
         return IntStream.range(0, NUM_VERTICES)
-                .mapToObj(i -> (i == 0 ? "M" : "L") + " " + vertices[ROW_X][i] + " " + vertices[ROW_Y][i])
+                .mapToObj(i -> (i == 0 ? "M" : "L") +
+                        String.format(Locale.ENGLISH, " %.6f %.6f", vertices[ROW_X][i], vertices[ROW_Y][i]))
                 .collect(Collectors.joining(" ")) + " Z";
     }
 
+    /**
+     * Updates the shape based on the given shape's properties.
+     *
+     * @param updatingValues The shape whose properties will be used for updating.
+     */
     @Override
     public void update(ShapeTemplate updatingValues) {
         super.update(updatingValues);
@@ -118,13 +128,16 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
         }
     }
 
-
+    /**
+     * Clones the vertices array to create a deep copy.
+     *
+     * @return A deep copy of the vertices array.
+     */
     protected double[][] cloneVertices() {
         return Arrays.stream(vertices)
                 .map(double[]::clone)
                 .toArray(double[][]::new);
     }
-
 
     /**
      * Defines the shape's vertices based on the given central coordinates.

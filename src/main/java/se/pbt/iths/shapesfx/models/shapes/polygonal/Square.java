@@ -47,7 +47,7 @@ public class Square extends VertexBasedShape implements Rotatable {
      * @param centerY The y-coordinate of the center of the square.
      */
     @Override
-    protected void calculateVertices(double centerX, double centerY) {
+    public void calculateVertices(double centerX, double centerY) {
         vertices = new double[2][NUM_VERTICES];
         double halfSize = size / 2;
         double leftX = centerX - halfSize;

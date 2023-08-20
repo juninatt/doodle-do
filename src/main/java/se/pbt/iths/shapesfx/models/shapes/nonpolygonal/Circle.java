@@ -4,6 +4,8 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 
+import java.util.Locale;
+
 /**
  * Represents a circle shape. This class extends the {@link ShapeTemplate}
  * and provides specific implementations for drawing, SVG path conversion, and point containment
@@ -38,7 +40,7 @@ public class Circle extends ShapeTemplate {
     @Override
     public String toSvgPath() {
         var radius = getSize() / 2;
-        return String.format("M %f %f m -%f, 0 a %f,%f 0 1,0 %f,0 a %f,%f 0 1,0 -%f,0", centerX, centerY, radius, radius, radius, radius * 2, radius, radius, radius * 2);
+        return String.format(Locale.ENGLISH, "M %.6f %.6f m -%.6f, 0 a %.6f,%.6f 0 1,0 %.6f,0 a %.6f,%.6f 0 1,0 -%.6f,0", centerX, centerY, radius, radius, radius, radius * 2, radius, radius, radius * 2);
     }
 
     /**

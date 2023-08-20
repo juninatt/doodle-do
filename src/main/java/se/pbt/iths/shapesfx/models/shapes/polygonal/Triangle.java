@@ -56,7 +56,7 @@ public class Triangle extends VertexBasedShape implements Rotatable {
      * @param centerY The y-coordinate of the center of the triangle.
      */
     @Override
-    protected void calculateVertices(double centerX, double centerY) {
+    public void calculateVertices(double centerX, double centerY) {
         vertices = new double[2][NUM_VERTICES];
 
         double bottomLeftX = centerX - size / 2;
@@ -95,7 +95,7 @@ public class Triangle extends VertexBasedShape implements Rotatable {
      * @return The triangles height
      */
     @Override
-    protected double getHeight() {
+    public double getHeight() {
         return (Math.sqrt(3) / 2) * size;
     }
 }
