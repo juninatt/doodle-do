@@ -1,5 +1,6 @@
 package se.pbt.iths.shapesfx.controller;
 
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -12,8 +13,8 @@ import se.pbt.iths.shapesfx.enums.CommandType;
 import se.pbt.iths.shapesfx.interfaces.CanvasCommand;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.operations.ShapeSaver;
-import se.pbt.iths.shapesfx.ui.config.AvailableShapesMenuConfigurator;
 import se.pbt.iths.shapesfx.ui.config.DrawShapeMenuConfigurator;
+import se.pbt.iths.shapesfx.ui.config.DrawnShapesMenuConfigurator;
 import se.pbt.iths.shapesfx.ui.config.SelectMenuConfigurator;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.CommandTypeProvider;
@@ -88,7 +89,7 @@ public class MainWindowController {
      */
     private void InitializeCanvas() {
         VBox.setMargin(canvasView, new Insets(10, 10, 10, 10));
-        canvasManager = new CanvasManager(canvasView);
+        canvasManager = new CanvasManager(canvasView, new DrawnShapeStorage(FXCollections.observableArrayList()));
     }
 
     /**
@@ -111,7 +112,7 @@ public class MainWindowController {
     private void InitializeMenuBar() {
         new SelectMenuConfigurator(selectMenu).configure();
         new DrawShapeMenuConfigurator(drawNewShapeMenu).configure();
-        new AvailableShapesMenuConfigurator(drawnShapesMenu, DrawnShapeStorage.getInstance()).configure();
+        new DrawnShapesMenuConfigurator(drawnShapesMenu, canvasManager.getAllDrawnShapes()).configure();
     }
 
     /**
@@ -159,7 +160,6 @@ public class MainWindowController {
         }
         return commandSupplier.get();
     }
-
 
     // Utility and Miscellaneous Methods
 

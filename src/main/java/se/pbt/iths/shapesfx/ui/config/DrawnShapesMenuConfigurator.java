@@ -1,6 +1,7 @@
 package se.pbt.iths.shapesfx.ui.config;
 
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
@@ -11,7 +12,7 @@ import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
  * Binds the content of a JavaFX Menu to the list of drawn shapes managed by {@link DrawnShapeStorage}.
  * When a new shape is added to or removed from the drawn shapes storage, the menu items are updated accordingly.
  */
-public class AvailableShapesMenuConfigurator {
+public class DrawnShapesMenuConfigurator {
 
     /**
      * Default menu item text displayed when no shapes are present.
@@ -26,17 +27,17 @@ public class AvailableShapesMenuConfigurator {
     /**
      * The storage managing the collection of drawn shapes.
      */
-    private final DrawnShapeStorage drawnShapes;
+    private final ObservableList<ShapeTemplate> drawnShapesList;
 
     /**
-     * Constructs a new AvailableShapesMenuConfigurator with the provided menu and drawn shapes storage.
+     * Constructs a new object with the provided menu and drawn shapes storage.
      *
      * @param menu The JavaFX menu to be configured.
-     * @param drawnShapes The storage containing the list of drawn shapes.
+     * @param drawnShapesList The list of drawn shapes.
      */
-    public AvailableShapesMenuConfigurator(Menu menu, DrawnShapeStorage drawnShapes) {
+    public DrawnShapesMenuConfigurator(Menu menu, ObservableList<ShapeTemplate> drawnShapesList) {
         this.menu =  menu;
-        this.drawnShapes = drawnShapes;
+        this.drawnShapesList = drawnShapesList;
     }
 
     /**
@@ -45,10 +46,10 @@ public class AvailableShapesMenuConfigurator {
      */
     private void updateMenuContent() {
         menu.getItems().clear();
-        if (drawnShapes.getDrawnShapes().isEmpty()) {
+        if (drawnShapesList.isEmpty()) {
             menu.getItems().add(new MenuItem(EMPTY_MENU));
         } else {
-            for (ShapeTemplate shape : drawnShapes.getDrawnShapes()) {
+            for (ShapeTemplate shape : drawnShapesList) {
                 menu.getItems().add(createShapeMenuItem(shape));
             }
         }
@@ -72,7 +73,7 @@ public class AvailableShapesMenuConfigurator {
      * Also performs an initial menu content update.
      */
     public void configure() {
-        drawnShapes.getDrawnShapes().addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuContent());
+        drawnShapesList.addListener((ListChangeListener<ShapeTemplate>) change -> updateMenuContent());
         updateMenuContent();
     }
 }

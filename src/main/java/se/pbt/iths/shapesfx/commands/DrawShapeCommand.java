@@ -4,7 +4,6 @@ import javafx.scene.input.MouseEvent;
 import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
 import se.pbt.iths.shapesfx.interfaces.CanvasCommand;
 import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
@@ -43,6 +42,7 @@ public class DrawShapeCommand implements CanvasCommand {
         shapeToDraw.ifPresentOrElse(shape -> {
             try {
                 canvasManager.performDraw(event.getX(), event.getY(), shape);
+                canvasManager.addShape(shape);
                 drawnShape = shape;
                 setInformationText(AppMessages.BEAUTIFUL);
                 SelectedShape.getInstance().reset();
@@ -67,7 +67,7 @@ public class DrawShapeCommand implements CanvasCommand {
      */
     @Override
     public void undo() {
-        DrawnShapeStorage.getInstance().removeShape(drawnShape.getName());
+        canvasManager.removeShape(drawnShape);
         canvasManager.refreshCanvas();
     }
 
@@ -77,7 +77,7 @@ public class DrawShapeCommand implements CanvasCommand {
     @Override
     public void redo() {
         if (drawnShape != null) {
-            DrawnShapeStorage.getInstance().addShape(drawnShape);
+            canvasManager.addShape(drawnShape);
             canvasManager.refreshCanvas();
         }
     }

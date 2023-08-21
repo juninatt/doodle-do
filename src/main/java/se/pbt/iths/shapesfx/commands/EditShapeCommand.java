@@ -6,7 +6,6 @@ import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
 import se.pbt.iths.shapesfx.enums.CommandType;
 import se.pbt.iths.shapesfx.interfaces.CanvasCommand;
 import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.ui.config.FXMLStageConfigurator;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
@@ -22,6 +21,7 @@ public class EditShapeCommand implements CanvasCommand {
     private final CanvasManager canvasManager;
     private ShapeTemplate originalShape;
     private ShapeTemplate editedShape;
+    private String shapeName;
 
     /**
      * Initializes a new instance of EditShapeCommand with the given {@link CanvasManager}.
@@ -42,18 +42,44 @@ public class EditShapeCommand implements CanvasCommand {
     @Override
     public void execute(MouseEvent event) {
         var shapeToEdit = canvasManager.findFirstShapeAtClickPoint(event);
-        if (shapeToEdit.isEmpty())
-            InformationTextProvider.setMessage(AppMessages.NO_SHAPE_SELECTED_MSG);
-        else {
-            originalShape = shapeToEdit.get().clone();
-            editedShape = shapeToEdit.get();
-            SelectedShape.getInstance().setSelectedShape(editedShape);
-            var windowLoader = new FXMLStageConfigurator(new Stage());
-            windowLoader.getConfiguredStage(shapeToEdit.get().getName(), "edit-shape-view.fxml").showAndWait();
-            canvasManager.refreshCanvas();
-            SelectedShape.getInstance().reset();
-        }
+        shapeToEdit.ifPresentOrElse(
+                shape -> {
+                    // Copy current state for undo/redo actions
+                    copyState(shape);
+                    SelectedShape.getInstance().setSelectedShape(shape);
+                    // Open dialog window and set new properties for the editing shape
+                    openEditDialog(shape);
+                    // Clear canvas and redraw shapes
+                    canvasManager.refreshCanvas();
+                    SelectedShape.getInstance().reset();
+                },
+                () -> InformationTextProvider.setMessage(AppMessages.NO_SHAPE_SELECTED_MSG)
+        );
+
         CommandTypeProvider.setCommandType(CommandType.EMPTY);
+    }
+
+    /**
+     * Creates deep copies of the original shape and the shape to be edited and
+     * stores the name of the original shape for later reference.
+     *
+     * @param shapeToEdit An Optional containing the shape template to be copied. The shape's name is also stored for later use.
+     */
+    private void copyState(ShapeTemplate shapeToEdit) {
+        originalShape = shapeToEdit.clone();
+        editedShape = shapeToEdit.clone();
+        shapeName = originalShape.getName();
+    }
+
+    /**
+     * Opens a dialog for editing a shape, based on the provided shape template wrapped in an Optional.
+     * If the Optional is empty, this method will do nothing.
+     *
+     * @param shapeToEdit An Optional containing the shape template to be edited. If the Optional is empty, the dialog will not be opened.
+     */
+    private static void openEditDialog(ShapeTemplate shapeToEdit) {
+        var windowLoader = new FXMLStageConfigurator(new Stage());
+        windowLoader.getConfiguredStage(shapeToEdit.getName(), "edit-shape-view.fxml").showAndWait();
     }
 
     /**
@@ -61,11 +87,7 @@ public class EditShapeCommand implements CanvasCommand {
      */
     @Override
     public void undo() {
-        if (originalShape != null && editedShape != null) {
-            DrawnShapeStorage.getInstance().get(editedShape.getName())
-                    .ifPresent(shape -> shape.update(originalShape));
-            canvasManager.refreshCanvas();
-        }
+        updateShape(originalShape);
     }
 
     /**
@@ -73,9 +95,20 @@ public class EditShapeCommand implements CanvasCommand {
      */
     @Override
     public void redo() {
-        if (originalShape != null && editedShape != null) {
-            DrawnShapeStorage.getInstance().get(originalShape.getName())
-                    .ifPresent(shape -> shape.update(editedShape));
+        updateShape(editedShape);
+    }
+
+    /**
+     * Updates the shape on the canvas with the given shape.
+     * If either the original shape or the edited shape is null, this method will do nothing.
+     * After updating the shape, it refreshes the canvas to reflect the changes.
+     *
+     * @param updatingShape The shape template to use for updating the shape on the canvas.
+     */
+    private void updateShape(ShapeTemplate updatingShape) {
+        if (updatingShape != null && editedShape != null) {
+            canvasManager.getShapeByName(shapeName).update(updatingShape);
+            canvasManager.refreshCanvas();
         }
     }
 }

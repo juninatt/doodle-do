@@ -5,7 +5,6 @@ import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
 import se.pbt.iths.shapesfx.interfaces.CanvasCommand;
 import se.pbt.iths.shapesfx.interfaces.Rotatable;
 import se.pbt.iths.shapesfx.models.shapes.polygonal.VertexBasedShape;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
 import se.pbt.iths.shapesfx.utils.ShapeRotator;
@@ -77,8 +76,7 @@ public class RotateShapeCommand implements CanvasCommand {
     public void redo() {
             if (previousShape != null) {
                 previousShape.rotate(shapeRotator, angle);
-                DrawnShapeStorage.getInstance().get(previousShape.getName())
-                        .ifPresent(shape -> shape.update(previousShape));
+                canvasManager.getShapeByName(previousShape.getName()).update(previousShape);
                 canvasManager.refreshCanvas();
         }
     }

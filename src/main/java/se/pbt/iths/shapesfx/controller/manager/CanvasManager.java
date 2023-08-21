@@ -1,11 +1,13 @@
 package se.pbt.iths.shapesfx.controller.manager;
 
+import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
 import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.ui.views.canvas.CanvasView;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 /**
@@ -15,15 +17,18 @@ public class CanvasManager {
 
     private final CanvasView canvas;
     private final GraphicsContext graphicsContext;
+    private final DrawnShapeStorage drawnShapes;
 
     /**
-     * Constructor initializing the canvas and its GraphicsContext.
+     * Constructor initializing the canvas and its GraphicsContext, along with the storage of drawn shapes.
      *
-     * @param canvas The canvas view.
+     * @param canvas       The canvas view.
+     * @param drawnShapes  The storage managing the collection of drawn shapes.
      */
-    public CanvasManager(CanvasView canvas) {
+    public CanvasManager(CanvasView canvas, DrawnShapeStorage drawnShapes) {
         this.canvas = canvas;
         this.graphicsContext = canvas.getCanvasNode().getGraphicsContext2D();
+        this.drawnShapes = drawnShapes;
     }
 
     /**
@@ -33,7 +38,7 @@ public class CanvasManager {
      * @return The first shape found at the click point, or empty if no shape is found.
      */
     public Optional<ShapeTemplate> findFirstShapeAtClickPoint(MouseEvent event) {
-        return DrawnShapeStorage.getInstance().getDrawnShapes().stream()
+        return drawnShapes.getDrawnShapes().stream()
                 .filter(shape -> shape.contains(event.getX(), event.getY()))
                 .findFirst();
     }
@@ -57,6 +62,14 @@ public class CanvasManager {
         }
     }
 
+    public ObservableList<ShapeTemplate> getAllDrawnShapes() {
+        return drawnShapes.getDrawnShapes();
+    }
+
+    public void addShape(ShapeTemplate shape) {
+        drawnShapes.addShape(shape);
+    }
+
     /**
      * Removes the specified shape from {@link DrawnShapeStorage}.
      *
@@ -64,10 +77,7 @@ public class CanvasManager {
      * @throws IllegalArgumentException If the provided shape is null.
      */
     public void removeShape(ShapeTemplate shape) {
-        if (shape == null) {
-            throw new IllegalArgumentException("Shape must not be null");
-        }
-        DrawnShapeStorage.getInstance().removeShape(shape);
+        drawnShapes.removeShape(shape);
     }
 
     /**
@@ -83,7 +93,7 @@ public class CanvasManager {
      * Redraws all the shapes on the canvas stored in {@link DrawnShapeStorage}.
      */
     private void redrawShapes() {
-        DrawnShapeStorage.getInstance().getDrawnShapes()
+        drawnShapes.getDrawnShapes()
                 .forEach(shapeTemplate -> performDraw(shapeTemplate.getCenterX(), shapeTemplate.getCenterY(), shapeTemplate));
     }
 
@@ -92,5 +102,9 @@ public class CanvasManager {
      */
     private void clearCanvas() {
         graphicsContext.clearRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+    }
+
+    public ShapeTemplate getShapeByName(String name) {
+        return drawnShapes.get(name).orElseThrow(() -> new NoSuchElementException("Shape with the name " + name + " not found"));
     }
 }

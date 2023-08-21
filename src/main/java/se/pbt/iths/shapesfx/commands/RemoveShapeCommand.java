@@ -5,7 +5,6 @@ import se.pbt.iths.shapesfx.controller.manager.CanvasManager;
 import se.pbt.iths.shapesfx.enums.CommandType;
 import se.pbt.iths.shapesfx.interfaces.CanvasCommand;
 import se.pbt.iths.shapesfx.models.shapes.ShapeTemplate;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.CommandTypeProvider;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
@@ -55,7 +54,7 @@ public class RemoveShapeCommand implements CanvasCommand {
      */
     @Override
     public void undo() {
-        DrawnShapeStorage.getInstance().getDrawnShapes().add(removedShape);
+        canvasManager.addShape(removedShape);
         canvasManager.refreshCanvas();
     }
 

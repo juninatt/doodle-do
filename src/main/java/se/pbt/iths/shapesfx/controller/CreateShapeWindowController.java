@@ -7,7 +7,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import se.pbt.iths.shapesfx.factory.ShapeFactory;
-import se.pbt.iths.shapesfx.modelsmanagement.DrawnShapeStorage;
 import se.pbt.iths.shapesfx.modelsmanagement.SelectedShape;
 import se.pbt.iths.shapesfx.ui.resources.AppMessages;
 import se.pbt.iths.shapesfx.ui.utils.InformationTextProvider;
@@ -58,9 +57,6 @@ public class CreateShapeWindowController {
         if (!allFieldsHaveValues()) {
             InformationTextProvider.getMessage().set(AppMessages.SHAPE_PROPERTIES_REQUIRED);
         }
-        else if (DrawnShapeStorage.getInstance().exists(shapeNameField.getText())) {
-            InformationTextProvider.getMessage().set(AppMessages.SHAPE_NAME_TAKEN);
-        }
         else {
             createShapeAndMakeSelected(stage.getTitle(), name);
             InformationTextProvider.getMessage().set(AppMessages.SHAPE_CREATION_SUCCESS);
@@ -75,7 +71,6 @@ public class CreateShapeWindowController {
      */
     private void createShapeAndMakeSelected(String shapeType, String name) {
         var newShape = ShapeFactory.createShape(shapeType, name, color, size);
-        DrawnShapeStorage.getInstance().addShape(newShape);
         SelectedShape.getInstance().setSelectedShape(newShape);
     }
 
