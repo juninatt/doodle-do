@@ -3,22 +3,22 @@ module se.pbt.iths.shapesfx {
     requires javafx.fxml;
 
 
-    opens se.pbt.iths.shapesfx to javafx.fxml;
+    opens se.pbt.iths.doodledo to javafx.fxml;
 
-    exports se.pbt.iths.shapesfx;
-    exports se.pbt.iths.shapesfx.controller;
-    opens se.pbt.iths.shapesfx.controller to javafx.fxml;
-    exports se.pbt.iths.shapesfx.ui.views.canvas;
-    exports se.pbt.iths.shapesfx.models.shapes.nonpolygonal;
-    exports se.pbt.iths.shapesfx.models.shapes.polygonal;
-    exports se.pbt.iths.shapesfx.exceptions;
-    exports se.pbt.iths.shapesfx.factory;
-    opens se.pbt.iths.shapesfx.factory to javafx.fxml;
-    exports se.pbt.iths.shapesfx.controller.manager;
-    opens se.pbt.iths.shapesfx.controller.manager to javafx.fxml;
-    exports se.pbt.iths.shapesfx.models.shapes;
-    exports se.pbt.iths.shapesfx.commands;
-    opens se.pbt.iths.shapesfx.commands to javafx.fxml;
-    exports se.pbt.iths.shapesfx.interfaces;
-    exports se.pbt.iths.shapesfx.enums;
+    exports se.pbt.iths.doodledo;
+    exports se.pbt.iths.doodledo.controller;
+    opens se.pbt.iths.doodledo.controller to javafx.fxml;
+    exports se.pbt.iths.doodledo.ui.views.canvas;
+    exports se.pbt.iths.doodledo.models.shapes.nonpolygonal;
+    exports se.pbt.iths.doodledo.models.shapes.polygonal;
+    exports se.pbt.iths.doodledo.exceptions;
+    exports se.pbt.iths.doodledo.factory;
+    opens se.pbt.iths.doodledo.factory to javafx.fxml;
+    exports se.pbt.iths.doodledo.controller.manager;
+    opens se.pbt.iths.doodledo.controller.manager to javafx.fxml;
+    exports se.pbt.iths.doodledo.models.shapes;
+    exports se.pbt.iths.doodledo.commands;
+    opens se.pbt.iths.doodledo.commands to javafx.fxml;
+    exports se.pbt.iths.doodledo.interfaces;
+    exports se.pbt.iths.doodledo.enums;
 }

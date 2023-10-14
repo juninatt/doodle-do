@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.pbt.iths</groupId>
-    <artifactId>ShapesFX</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <name>ShapesFX</name>
+    <artifactId>DoodleDo</artifactId>
+    <version>1.0</version>
+    <name>DoodleDo</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,7 +67,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>se.pbt.iths.shapesfx/se.pbt.iths.shapesfx.ShapesApplication</mainClass>
+                            <mainClass>se.pbt.iths.shapesfx/se.pbt.iths.doodledo.DoodleDoApp</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

@@ -1,7 +1,6 @@
-# ShapesFX
+# DoodleDo
 
-ShapesFX is a JavaFX-based application that allows users to draw, modify, and interact with geometric shapes on a canvas.
-
+DoodleDo: Because Picasso had to start somewhere. Embrace your inner artist with basic shapes on a canvas. It's a JavaFX masterpiece, but don't expect the Louvre... yet.
 ## Features
 
 - **Dynamic Drawing Canvas**: Create shapes like circles, rectangles, and triangles by specifying their parameters.
@@ -16,7 +15,7 @@ ShapesFX is a JavaFX-based application that allows users to draw, modify, and in
 
 ## Building and Running
 
-To get the ShapesFX application up and running, follow these steps:
+To get the DoodleDo application up and running, follow these steps:
 
 1. **Build the Application**:
    Utilize Maven to compile and build the project.
@@ -38,4 +37,4 @@ To get the ShapesFX application up and running, follow these steps:
 ### Author
 
 Petter Bergström, 
-GitHub: [juninatt](https://github.com/juninatt) 
+GitHub: [juninatt](https://github.com/juninatt)

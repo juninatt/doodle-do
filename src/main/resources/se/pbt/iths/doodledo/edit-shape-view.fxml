@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.Color?>
+
+<?import java.net.URL?>
+<GridPane xmlns:fx="http://javafx.com/fxml" alignment="CENTER" hgap="10" vgap="10" fx:controller="se.pbt.iths.doodledo.controller.EditShapeWindowController">
+    <stylesheets>
+        <URL value="@style.css" />
+    </stylesheets>
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20" />
+    </padding>
+
+    <Label styleClass="title-label" GridPane.columnSpan="2" />
+
+    <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="CENTER">
+        <Label text="Name:"/>
+        <TextField promptText="Enter name of shape" fx:id="shapeNameField" />
+    </HBox>
+
+    <HBox spacing="10" GridPane.columnIndex="0" GridPane.rowIndex="1" alignment="CENTER">
+        <Label text="Size:" />
+        <Slider fx:id="sizeSlider" min="10" max="100" value="50" />
+    </HBox>
+
+    <HBox spacing="15" GridPane.columnIndex="0" GridPane.rowIndex="2" alignment="CENTER">
+        <Label text="Color:" />
+        <ColorPicker fx:id="colorPicker">
+            <value>
+                <Color fx:constant="LIGHTBLUE" />
+            </value>
+        </ColorPicker>
+    </HBox>
+
+    <HBox alignment="CENTER" GridPane.columnIndex="0" GridPane.rowIndex="3">
+        <Button text="Confirm" onAction="#confirmChangesButtonClicked"/>
+    </HBox>
+
+</GridPane>
