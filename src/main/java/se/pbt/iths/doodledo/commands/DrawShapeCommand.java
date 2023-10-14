@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.commands;
 
+import javafx.geometry.Point2D;
 import javafx.scene.input.MouseEvent;
 import se.pbt.iths.doodledo.controller.manager.CanvasManager;
 import se.pbt.iths.doodledo.interfaces.CanvasCommand;
@@ -41,7 +42,8 @@ public class DrawShapeCommand implements CanvasCommand {
 
         shapeToDraw.ifPresentOrElse(shape -> {
             try {
-                canvasManager.performDraw(event.getX(), event.getY(), shape);
+                shape.setCenter(new Point2D(event.getX(), event.getY()));
+                canvasManager.performDraw(shape);
                 canvasManager.addShape(shape);
                 drawnShape = shape;
                 setInformationText(AppMessages.BEAUTIFUL);

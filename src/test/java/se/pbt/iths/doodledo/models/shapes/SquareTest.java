@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.models.shapes;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,18 +20,20 @@ class SquareTest {
         @DisplayName("Returns true when point is outside square")
         void pointContained() {
             Square square = new Square("MySquare", Color.BLUE, 10);
-            square.calculateVertices(5, 5); // Center coordinates
+            square.setCenter(new Point2D(5, 5));
+            square.calculateVertices(new Point2D(5, 5)); // Center coordinates
 
-            assertTrue(square.contains(3, 3)); // Point within the square
+            assertTrue(square.contains(new Point2D(3, 3))); // Point within the square
         }
 
         @Test
         @DisplayName("Returns false when point is outside square")
         void pointOutside() {
             Square square = new Square("MySquare", Color.BLUE, 10);
-            square.calculateVertices(5, 5); // Center coordinates
+            square.setCenter(new Point2D(5, 5));
+            square.calculateVertices(new Point2D(5, 5)); // Center coordinates
 
-            assertFalse(square.contains(11, 5)); // Point outside the square
+            assertFalse(square.contains(new Point2D(11, 5))); // Point outside the square
         }
     }
 
@@ -42,7 +45,7 @@ class SquareTest {
         @DisplayName("Correctly calculates vertices positions for the square")
         void calculateVerticesPositions() {
             Square square = new Square("MySquare", Color.BLUE, 4);
-            square.calculateVertices(5, 5); // Center coordinates
+            square.calculateVertices(new Point2D(5, 5)); // Center coordinates
 
             double[][] vertices = square.getVertices();
 
@@ -59,7 +62,7 @@ class SquareTest {
         @DisplayName("Creates identical object when cloned")
         void cloneSquare() {
             Square square = new Square("MySquare", Color.BLUE, 10);
-            square.calculateVertices(5, 5); // Center coordinates
+            square.calculateVertices(new Point2D(5, 5)); // Center coordinates
             Square clonedSquare = square.clone();
 
             assertEquals(square.getName(), clonedSquare.getName());

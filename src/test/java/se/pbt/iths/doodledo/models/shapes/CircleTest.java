@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.models.shapes;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +17,7 @@ class CircleTest {
 
     @BeforeEach
     void setUp() {
-        circle = new Circle("testCircle", Color.RED, 10.0, 5.0, 5.0);
+        circle = new Circle("testCircle", Color.RED, 10.0, new Point2D(5.0, 5.0));
     }
 
     @Nested
@@ -34,7 +35,7 @@ class CircleTest {
         @Test
         @DisplayName("Creates correct SVG path for circle 2.")
         void createsCorrectSvgPathDifferentRadius() {
-            Circle circle = new Circle("radiusCircle", Color.YELLOW, 15.0, 10.0, 10.0);
+            Circle circle = new Circle("radiusCircle", Color.YELLOW, 15.0, new Point2D(10.0, 10.0));
             String expectedPath = "M 10.000000 10.000000 m -7.500000, 0 a 7.500000,7.500000 0 1,0 15.000000,0 a 7.500000,7.500000 0 1,0 -15.000000,0";
             assertEquals(expectedPath, circle.toSvgPath());
         }
@@ -48,13 +49,13 @@ class CircleTest {
         @Test
         @DisplayName("Returns true when point is inside the circle")
         void whenPointInsideCircle_returnsTrue() {
-            assertTrue(circle.contains(5.0, 5.0));
+            assertTrue(circle.contains(new Point2D(5.0, 5.0)));
         }
 
         @Test
         @DisplayName("Returns false when point is outside the circle")
         void whenPointOutsideCircle_returnsFalse() {
-            assertFalse(circle.contains(10.0, 10.0));
+            assertFalse(circle.contains(new Point2D(10.0, 10.0)));
         }
     }
 

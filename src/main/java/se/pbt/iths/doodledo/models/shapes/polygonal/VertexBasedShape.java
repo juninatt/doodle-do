@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.models.shapes.polygonal;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import se.pbt.iths.doodledo.interfaces.Rotatable;
@@ -17,15 +18,10 @@ import java.util.stream.IntStream;
  */
 public abstract class VertexBasedShape extends ShapeTemplate implements Rotatable {
 
-    // Constants
-    protected final int NUM_VERTICES;
-
-    // Instance variables
+    // Fields
+    protected final int verticesSize;
     protected double[][] vertices;
 
-    public void setVertices(double[][] vertices) {
-        this.vertices = vertices;
-    }
 
     /**
      * Constructs a vertex-based shape with the essential properties.
@@ -37,17 +33,18 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
      */
     protected VertexBasedShape(String name, Paint paint, double size, int numVertices) {
         super(name, paint, size);
-        NUM_VERTICES = numVertices;
+        verticesSize = numVertices;
     }
 
+    // Getters and setters
 
     /**
      * Returns the number of vertices that define the shape.
      *
      * @return The number of vertices.
      */
-    public int getNUM_VERTICES() {
-        return NUM_VERTICES;
+    public int getVerticesSize() {
+        return verticesSize;
     }
 
     /**
@@ -59,24 +56,27 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
         return vertices;
     }
 
+    public void setVertices(double[][] vertices) {
+        this.vertices = vertices;
+    }
+
+
     /**
      * Draws the shape on the specified GraphicsContext at the given center coordinates and
      * initializes vertices if not set, then fills the polygon using the shape's paint color.
      *
      * @param gc       The GraphicsContext to draw on.
-     * @param centerX  The x-coordinate of the center.
-     * @param centerY  The y-coordinate of the center.
+     * @param point    The center of the shape
      */
     @Override
-    public void draw(GraphicsContext gc, double centerX, double centerY) {
-        this.centerX = centerX;
-        this.centerY = centerY;
+    public void draw(GraphicsContext gc, Point2D point) {
+        this.center = point;
 
         if (vertices == null)
-            calculateVertices(centerX, centerY);
+            calculateVertices(center);
 
         gc.setFill(getPaint());
-        gc.fillPolygon(vertices[ROW_X], vertices[ROW_Y], NUM_VERTICES);
+        gc.fillPolygon(vertices[ROW_X], vertices[ROW_Y], verticesSize);
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
      */
     @Override
     public void rotate(ShapeRotator rotator, double angle) {
-        vertices = rotator.rotatePoints(vertices, centerX, centerY, angle);
+        vertices = rotator.rotatePoints(vertices, center, angle);
     }
 
     /**
@@ -98,7 +98,7 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
     @Override
     public void setSize(double size) {
         super.setSize(size);
-        calculateVertices(centerX, centerY);
+        calculateVertices(center);
     }
 
     /**
@@ -109,7 +109,7 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
     @Override
     public String toSvgPath() {
         // Converting the vertices into an SVG path by looping through them with a stream
-        return IntStream.range(0, NUM_VERTICES)
+        return IntStream.range(0, verticesSize)
                 .mapToObj(i -> (i == 0 ? "M" : "L") +
                         String.format(Locale.ENGLISH, " %.6f %.6f", vertices[ROW_X][i], vertices[ROW_Y][i]))
                 .collect(Collectors.joining(" ")) + " Z";
@@ -143,8 +143,7 @@ public abstract class VertexBasedShape extends ShapeTemplate implements Rotatabl
      * Defines the shape's vertices based on the given central coordinates.
      * How these coordinates translate into vertices depends on the individual characteristics of the shape.
      *
-     * @param centerX The horizontal midpoint of the shape.
-     * @param centerY The vertical midpoint of the shape.
+     * @param center The center of the shape.
      */
-    protected abstract void calculateVertices(double centerX, double centerY);
+    protected abstract void calculateVertices(Point2D center);
 }

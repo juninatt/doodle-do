@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.utils;
 
+import javafx.geometry.Point2D;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class ShapeRotatorTest {
     void testRotatePoints_90Degrees() {
         double[][] vertices = {{0, 2, 2, 0}, {0, 0, 2, 2}};
         double[][] expected = {{0, 0, -2, -2}, {0, 2, 2, 0}};
-        double[][] result = shapeRotator.rotatePoints(vertices, 0, 0, 90);
+        double[][] result = shapeRotator.rotatePoints(vertices, new Point2D(0, 0), 90);
 
         assertEqualValues(expected, result);
     }
@@ -32,7 +33,7 @@ class ShapeRotatorTest {
     void testRotatePoints_180Degrees_CustomCenter() {
         double[][] vertices = {{3, 4}, {3, 4}};
         double[][] expected = {{3, 2}, {3, 2}};
-        double[][] result = shapeRotator.rotatePoints(vertices, 3, 3, 180);
+        double[][] result = shapeRotator.rotatePoints(vertices, new Point2D(3, 3), 180);
 
         assertEqualValues(expected, result);
     }
@@ -42,7 +43,7 @@ class ShapeRotatorTest {
     void testRotatePoints_NoRotation() {
         double[][] vertices = {{3, 5}, {3, 5}};
         double[][] expected = {{3, 5}, {3, 5}};
-        double[][] result = shapeRotator.rotatePoints(vertices, 3, 3, 0);
+        double[][] result = shapeRotator.rotatePoints(vertices, new Point2D(3, 3), 0);
 
         assertEqualValues(expected, result);
     }
@@ -52,7 +53,7 @@ class ShapeRotatorTest {
     void testRotateTriangle_90Degrees() {
         double[][] vertices = {{0, 1, 0}, {0, 0, 1}}; // Triangle vertices
         double[][] expected = {{0, 0, -1}, {0, 1, 0}};
-        double[][] result = shapeRotator.rotatePoints(vertices, 0, 0, 90);
+        double[][] result = shapeRotator.rotatePoints(vertices, new Point2D(0, 0), 90);
 
         assertEqualValues(expected, result);
     }
@@ -62,7 +63,7 @@ class ShapeRotatorTest {
     void testRotateTriangle_180Degrees_Centroid() {
         double[][] vertices = {{0, 1, 2}, {0, 2, 0}}; // Triangle vertices
         double[][] expected = {{2, 1, 0}, {0, -2, 0}};
-        double[][] result = shapeRotator.rotatePoints(vertices, 1, 0, 180);
+        double[][] result = shapeRotator.rotatePoints(vertices, new Point2D(1, 0), 180);
 
         assertEqualValues(expected, result);
     }
@@ -72,7 +73,7 @@ class ShapeRotatorTest {
     void testRotateSquare_180Degrees_Center() {
         double[][] vertices = {{0, 0, 1, 1}, {0, 1, 1, 0}}; // Square vertices
         double[][] expected = {{1, 1, 0, 0}, {1, 0, 0, 1}};
-        double[][] result = shapeRotator.rotatePoints(vertices, 0.5, 0.5, 180);
+        double[][] result = shapeRotator.rotatePoints(vertices, new Point2D(0.5, 0.5), 180);
 
         assertEqualValues(expected, result);
     }

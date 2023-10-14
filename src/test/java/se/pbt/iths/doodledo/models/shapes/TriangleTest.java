@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.models.shapes;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -19,18 +20,21 @@ class TriangleTest {
         @DisplayName("Returns true when point is outside inside")
         void pointContained() {
             var triangle = new Triangle("MyTriangle", Color.RED, 10);
-            triangle.calculateVertices(5, 5); // Center coordinates
+            triangle.setCenter(new Point2D(5, 5));
+            triangle.calculateVertices(new Point2D(5, 5)); // Center coordinates
 
-            assertTrue(triangle.contains(5, 2)); // Point within the triangle
+            assertTrue(triangle.contains(new Point2D(5, 2))); // Point within the triangle
         }
 
         @Test
         @DisplayName("Returns false when point is outside triangle")
         void pointOutside() {
             var triangle = new Triangle("MyTriangle", Color.RED, 10);
-            triangle.calculateVertices(5, 5); // Center coordinates
+            Point2D center = new Point2D(5, 5);
+            triangle.setCenter(center);
+            triangle.calculateVertices(center); // Center coordinates
 
-            assertFalse(triangle.contains(10, 5)); // Point outside the triangle
+            assertFalse(triangle.contains(new Point2D(10, 5))); // Point outside the triangle
         }
     }
 
@@ -42,7 +46,7 @@ class TriangleTest {
         @DisplayName("Creates identical object when cloned")
         void cloneTriangle() {
             var triangle = new Triangle("MyTriangle", Color.RED, 10);
-            triangle.calculateVertices(5, 5); // Center coordinates
+            triangle.calculateVertices(new Point2D(5, 5)); // Center coordinates
             var clonedTriangle = triangle.clone();
 
             assertEquals(triangle.getName(), clonedTriangle.getName());

@@ -1,6 +1,9 @@
 # DoodleDo
 
-DoodleDo: Because Picasso had to start somewhere. Embrace your inner artist with basic shapes on a canvas. It's a JavaFX masterpiece, but don't expect the Louvre... yet.
+DoodleDo: Because Picasso had to start somewhere. Embrace your inner artist with basic shapes on a canvas. 
+It's a JavaFX masterpiece, but don't expect the Louvre... yet.
+Pythagoras might roll his eyes, but DoodleDo fearlessly calculates its shapes without Java's hand-holding.
+
 ## Features
 
 - **Dynamic Drawing Canvas**: Create shapes like circles, rectangles, and triangles by specifying their parameters.

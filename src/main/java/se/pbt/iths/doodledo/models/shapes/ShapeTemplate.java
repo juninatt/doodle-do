@@ -1,7 +1,7 @@
 package se.pbt.iths.doodledo.models.shapes;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Shape;
 import se.pbt.iths.doodledo.interfaces.Drawable;
 import se.pbt.iths.doodledo.interfaces.Updatable;
 
@@ -9,13 +9,14 @@ import se.pbt.iths.doodledo.interfaces.Updatable;
  * Abstract class representing a template for shapes with extended properties.
  * Each shape derived from this template can be drawn and updated.
  */
-public abstract class ShapeTemplate extends Shape implements Drawable, Updatable {
+public abstract class ShapeTemplate implements Drawable, Updatable {
     protected String name;
     protected Paint paint;
     protected double size;
-    protected Paint strokeColor;
-    protected double centerX;
-    protected double centerY;
+    /**
+     * The x and y coordinates representing the center of the shape
+     */
+    protected Point2D center;
 
     /**
      * Default constructor.
@@ -35,12 +36,10 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
     /**
      * Comprehensive constructor with extended properties.
      */
-    public ShapeTemplate(String name, Paint paint, Paint strokeColor, double centerX, double centerY) {
+    public ShapeTemplate(String name, Paint paint, Point2D center) {
         this.name = name;
         this.paint = paint;
-        this.strokeColor = strokeColor;
-        this.centerX = centerX;
-        this.centerY = centerY;
+        this.center = center;
     }
 
     public String getName() {
@@ -67,28 +66,12 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
         this.size = size;
     }
 
-    public Paint getStrokeColor() {
-        return strokeColor;
+    public Point2D getCenter() {
+        return center;
     }
 
-    public void setStrokeColor(Paint strokeColor) {
-        this.strokeColor = strokeColor;
-    }
-
-    public final double getCenterX() {
-        return centerX;
-    }
-
-    public final void setCenterX(double centerX) {
-        this.centerX = centerX;
-    }
-
-    public final double getCenterY() {
-        return centerY;
-    }
-
-    public final void setCenterY(double centerY) {
-        this.centerY = centerY;
+    public void setCenter(Point2D center) {
+        this.center = center;
     }
 
     /**
@@ -104,6 +87,14 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
      * @return The height of the shape.
      */
     protected abstract double getHeight();
+
+    /**
+     * Checks if the specified point is contained within the geometric shape.
+     *
+     * @param coordinates the coordinates of the point to be checked
+     * @return {@code true} if the point is contained within the shape, {@code false} otherwise
+     */
+    public abstract boolean contains(Point2D coordinates);
 
     /**
      * Clones the current object, creating a deep copy.
@@ -122,7 +113,6 @@ public abstract class ShapeTemplate extends Shape implements Drawable, Updatable
         this.name = updatingValues.getName();
         this.paint = updatingValues.getPaint();
         this.size = updatingValues.getSize();
-        this.centerX = updatingValues.getCenterX();
-        this.centerY = updatingValues.getCenterY();
+        this.center = updatingValues.getCenter();
     }
 }

@@ -1,6 +1,7 @@
 package se.pbt.iths.doodledo.controller.manager;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseEvent;
 import se.pbt.iths.doodledo.models.shapes.ShapeTemplate;
@@ -39,24 +40,22 @@ public class CanvasManager {
      */
     public Optional<ShapeTemplate> findFirstShapeAtClickPoint(MouseEvent event) {
         return drawnShapes.getDrawnShapes().stream()
-                .filter(shape -> shape.contains(event.getX(), event.getY()))
+                .filter(shape -> shape.contains(new Point2D(event.getX(), event.getY())))
                 .findFirst();
     }
 
     /**
      * Draws the specified shape on the canvas with the center point at the given coordinates.
      *
-     * @param centerX    The x-coordinate of the center.
-     * @param centerY    The y-coordinate of the center.
      * @param shape The shape to be drawn.
      */
-    public void performDraw(double centerX, double centerY, ShapeTemplate shape) {
+    public void performDraw(ShapeTemplate shape) {
         if (shape == null) {
             throw new IllegalArgumentException("Shape must not be null");
         }
         try {
-            graphicsContext.setFill(shape.getFill());
-            shape.draw(graphicsContext, centerX, centerY);
+            graphicsContext.setFill(shape.getPaint());
+            shape.draw(graphicsContext, shape.getCenter());
         } catch (RuntimeException exception) {
             exception.printStackTrace();
         }
@@ -94,7 +93,7 @@ public class CanvasManager {
      */
     private void redrawShapes() {
         drawnShapes.getDrawnShapes()
-                .forEach(shapeTemplate -> performDraw(shapeTemplate.getCenterX(), shapeTemplate.getCenterY(), shapeTemplate));
+                .forEach(this::performDraw);
     }
 
     /**

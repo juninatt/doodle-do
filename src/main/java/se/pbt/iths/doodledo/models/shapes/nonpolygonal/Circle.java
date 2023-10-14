@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.models.shapes.nonpolygonal;
 
+import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Paint;
 import se.pbt.iths.doodledo.models.shapes.ShapeTemplate;
@@ -26,10 +27,9 @@ public class Circle extends ShapeTemplate {
         super(name, fillColor, diameter);
     }
 
-    public Circle(String name, Paint fillColor, double diameter, double centerX, double centerY) {
+    public Circle(String name, Paint fillColor, double diameter, Point2D center) {
         super(name, fillColor, diameter);
-        this.centerX = centerX;
-        this.centerY = centerY;
+        this.center = center;
     }
 
     /**
@@ -40,41 +40,35 @@ public class Circle extends ShapeTemplate {
     @Override
     public String toSvgPath() {
         var radius = getSize() / 2;
-        return String.format(Locale.ENGLISH, "M %.6f %.6f m -%.6f, 0 a %.6f,%.6f 0 1,0 %.6f,0 a %.6f,%.6f 0 1,0 -%.6f,0", centerX, centerY, radius, radius, radius, radius * 2, radius, radius, radius * 2);
+        return String.format(Locale.ENGLISH, "M %.6f %.6f m -%.6f, 0 a %.6f,%.6f 0 1,0 %.6f,0 a %.6f,%.6f 0 1,0 -%.6f,0", center.getX(), center.getY(), radius, radius, radius, radius * 2, radius, radius, radius * 2);
     }
 
     /**
      * Draws the circle on a graphics context.
      *
      * @param gc The graphics context where the circle is to be drawn.
-     * @param coordinateX  The X-coordinate of the circle's center.
-     * @param coordinateY  The Y-coordinate of the circle's center.
+     * @param point The center of the shape
      */
     @Override
-    public void draw(GraphicsContext gc, double coordinateX, double coordinateY) {
+    public void draw(GraphicsContext gc, Point2D point) {
         // Set the center coordinates of the circle
-        centerX = coordinateX;
-        centerY = coordinateY;
+        point = point;
 
         var diameter = size;
 
         // Draw the filled oval (circle) using the specified coordinates, radius, and fill color
         gc.setFill(getPaint());
-        gc.fillOval(coordinateX - diameter / 2, coordinateY - diameter / 2, diameter, diameter);
+        gc.fillOval(point.getX() - diameter / 2, point.getY() - diameter / 2, diameter, diameter);
     }
 
     /**
-     * Determines if a point (x,y) is within the circle's boundaries.
-     *
-     * @param coordinateX The X-coordinate of the point.
-     * @param coordinateY The Y-coordinate of the point.
-     * @return True if the point is inside the circle, otherwise false.
+     * {@inheritDoc}
      */
     @Override
-    public boolean contains(double coordinateX, double coordinateY) {
+    public boolean contains(Point2D coordinates) {
         // Find the difference in x and y coordinates from the point to the center of the circle
-        double horizontalDifference = centerX - coordinateX;
-        double verticalDifference = centerY - coordinateY;
+        double horizontalDifference = coordinates.getX() - center.getX();
+        double verticalDifference = coordinates.getY() - center.getY();
 
         // Determine the square of the distance from the point to the center of the circle
         // (Uses the Pythagorean theorem, avoiding the square root for efficiency)
@@ -95,7 +89,7 @@ public class Circle extends ShapeTemplate {
      */
     @Override
     public ShapeTemplate clone() {
-        return new Circle(this.name, this.paint, this.size, this.centerX, this.centerY);
+        return new Circle(this.name, this.paint, this.size, this.center);
     }
     @Override
     protected double getHeight() {

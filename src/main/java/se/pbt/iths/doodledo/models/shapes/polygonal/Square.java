@@ -1,5 +1,6 @@
 package se.pbt.iths.doodledo.models.shapes.polygonal;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Paint;
 import se.pbt.iths.doodledo.interfaces.Rotatable;
 import se.pbt.iths.doodledo.models.shapes.ShapeTemplate;
@@ -25,35 +26,33 @@ public class Square extends VertexBasedShape implements Rotatable {
 
 
     /**
-     * Determines if the specified point (x,y) is within the square's boundaries.
-     *
-     * @param x The X-coordinate of the point.
-     * @param y The Y-coordinate of the point.
-     * @return True if the point is inside the square, otherwise false.
+     * {@inheritDoc}
      */
     @Override
-    public boolean contains(double x, double y) {
-        var leftX = centerX - size / 2;
-        var topY = centerY - size / 2;
+    public boolean contains(Point2D coordinates) {
+        double x = coordinates.getX();
+        double y = coordinates.getY();
+
+        var leftX = center.getX() - size / 2;
+        var topY = center.getY() - size / 2;
         // Check if the point lies within the horizontal and vertical boundaries of the square
-        return x >= leftX && x <= leftX + size && y >= topY && y <= topY + size;
+        return coordinates.getX() >= leftX && x <= leftX + size && y >= topY && y <= topY + size;
     }
 
     /**
      * Initializes the vertices of the square by calculating the positions of the four corners of the square
      * based on the given center coordinates and storing them in the vertices array.
      *
-     * @param centerX The x-coordinate of the center of the square.
-     * @param centerY The y-coordinate of the center of the square.
+     * @param center The center of the shape.
      */
     @Override
-    public void calculateVertices(double centerX, double centerY) {
-        vertices = new double[2][NUM_VERTICES];
+    public void calculateVertices(Point2D center) {
+        vertices = new double[2][verticesSize];
         double halfSize = size / 2;
-        double leftX = centerX - halfSize;
-        double rightX = centerX + halfSize;
-        double topY = centerY - halfSize;
-        double bottomY = centerY + halfSize;
+        double leftX = center.getX() - halfSize;
+        double rightX = center.getX() + halfSize;
+        double topY = center.getY() - halfSize;
+        double bottomY = center.getY() + halfSize;
 
         // Define the X and Y coordinates for the four vertices of the square
         vertices[ROW_X] = new double[]{leftX, rightX, rightX, leftX};
@@ -70,10 +69,9 @@ public class Square extends VertexBasedShape implements Rotatable {
     @Override
     public Square clone() {
         Square cloned = new Square(name, paint, size);
-        cloned.setCenterX(centerX);
-        cloned.setCenterY(centerY);
+        cloned.setCenter(center);
         if (vertices == null)
-            cloned.calculateVertices(centerX, centerY);
+            cloned.calculateVertices(center);
         else
             cloned.setVertices(this.cloneVertices());
         return cloned;
